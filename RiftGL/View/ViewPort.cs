@@ -6,13 +6,6 @@
 
     public class ViewPort
     {
-        public static dynamic GLVector3, GLMatrix3, GLMatrix4;
-
-        public static readonly AttributeCollection Attributes = new AttributeCollection();
-        public static readonly UniformCollection Uniforms = new UniformCollection();
-        public static readonly BufferCollection Buffers = new BufferCollection();
-        public static readonly MatrixCollection Matrices = new MatrixCollection();
-
         public ViewPort()
         {
             GLVector3 = Builtins.Global["vec3"];
@@ -20,7 +13,15 @@
             GLMatrix3 = Builtins.Global["mat3"];
         }
 
+        public static dynamic GLVector3, GLMatrix3, GLMatrix4;
+        public static dynamic Document;
+        public static dynamic Canvas;
         public dynamic GL;
+
+        public static readonly AttributeCollection Attributes = new AttributeCollection();
+        public static readonly UniformCollection Uniforms = new UniformCollection();
+        public static readonly BufferCollection Buffers = new BufferCollection();
+        public static readonly MatrixCollection Matrices = new MatrixCollection();
 
         public void UploadTexture(object textureHandle, object imageElement)
         {
@@ -44,7 +45,7 @@
             GLMatrix4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, Matrices.Projection);
         }
 
-        public void DrawLighting(dynamic Document)
+        public void DrawLighting()
         {
             GL.uniform3f(
                 Uniforms.AmbientColor,

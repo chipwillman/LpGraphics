@@ -13,8 +13,8 @@
 
     public class BufferCollection
     {
-        public object CubeVertexPositions, CubeVertexNormals, CubeTextureCoords;
-        public object CubeIndices;
+        public object VertexPositions, VertexNormals, TextureCoords;
+        public object Indices;
     }
 
     public class MatrixCollection

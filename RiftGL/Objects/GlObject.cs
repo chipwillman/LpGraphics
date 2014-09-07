@@ -28,15 +28,15 @@
 
         public float Size { get; set; }
 
-        private Stack<object> glViewMatrix = new Stack<object>();
+        private Stack<float[]> glViewMatrix = new Stack<float[]>();
 
-        public void Draw(ViewPort camera)
+        public void Draw(Camera camera)
         {
-            // glViewMatrix.Push(camera.ViewMatrix);
+            glViewMatrix.Push(ViewPort.Matrices.ModelView);
 
             this.OnDraw(camera);
 
-            // camera.ViewMatrix = glViewMatrix.Pop();
+            ViewPort.Matrices.ModelView = glViewMatrix.Pop();
         }
 
         public void Animate(float deltaTime)
@@ -104,7 +104,7 @@
             this.Velocity += this.Acceleration * deltaTime;
         }
 
-        protected virtual void OnDraw(ViewPort camera)
+        protected virtual void OnDraw(Camera camera)
         {
         }
 

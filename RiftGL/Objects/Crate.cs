@@ -91,18 +91,18 @@
             return shaderObject;
         }
 
-        public void InitTexture(ViewPort viewPort, dynamic document)
+        public void InitTexture(ViewPort viewPort)
         {
             CrateTexture = viewPort.GL.createTexture();
 
-            var imageElement = document.createElement("img");
+            var imageElement = ViewPort.Document.createElement("img");
             imageElement.onload = (Action)(
                 () => viewPort.UploadTexture(CrateTexture, imageElement)
             );
 
             try
             {
-                var imageBytes = File.ReadAllBytes("crate.png");
+                var imageBytes = File.ReadAllBytes("ground.png");
                 var objectUrl = Builtins.Global["JSIL"].GetObjectURLForBytes(imageBytes, "image/png");
                 imageElement.src = objectUrl;
             }
@@ -126,27 +126,30 @@
             Rotation.Y += (Speed.Y * deltaTime) / 1000f;
         }
 
-        protected override void OnDraw(ViewPort camera)
+        protected override void OnDraw(Camera camera)
         {
-            ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
-            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { 0, 0, Position.Z });
+            // ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
+            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
             ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X), new[] { 1f, 0, 0 });
             ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y), new[] { 0, 1f, 0 });
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.CubeVertexPositions);
+
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.VertexPositions);
             camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.CubeVertexNormals);
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.VertexNormals);
             camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexNormal, 3, camera.GL.FLOAT, false, 0, 0);
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.CubeTextureCoords);
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.TextureCoords);
             camera.GL.vertexAttribPointer(ViewPort.Attributes.TextureCoord, 2, camera.GL.FLOAT, false, 0, 0);
 
             camera.GL.activeTexture(camera.GL.TEXTURE0);
             camera.GL.bindTexture(camera.GL.TEXTURE_2D, CrateTexture);
             camera.GL.uniform1i(ViewPort.Uniforms.Sampler, 0);
 
-            camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, ViewPort.Buffers.CubeIndices);
+
+            camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, ViewPort.Buffers.Indices);
+
 
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ProjectionMatrix, false, ViewPort.Matrices.Projection);
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ModelViewMatrix, false, ViewPort.Matrices.ModelView);

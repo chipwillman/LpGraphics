@@ -1,0 +1,20 @@
+/_ReSharper.Services
+bin/
+obj/
+packages/
+*.suo
+*.user
+build/
+tmp/
+TestResults/
+deployment-pipeline/*.log
+StyleCop.Cache
+
+/Services/App_Data/Elmah.sdf
+/Services/Properties/PublishProfiles/*.pubxml
+
+# Backup & report files from converting an old project file to a newer
+# Visual Studio version
+_UpgradeReport_Files/
+UpgradeLog*.XML
+UpgradeLog*.htm

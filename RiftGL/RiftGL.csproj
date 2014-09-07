@@ -45,16 +45,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\Audio.cs" />
+    <Compile Include="Objects\Camera.cs" />
     <Compile Include="Objects\Collections.cs" />
     <Compile Include="Objects\Crate.cs" />
     <Compile Include="Objects\GlObject.cs" />
+    <Compile Include="Objects\Gui.cs" />
     <Compile Include="Objects\Inventory.cs" />
+    <Compile Include="Objects\Player.cs" />
+    <Compile Include="Objects\Terrain.cs" />
+    <Compile Include="Objects\GlTexture.cs" />
     <Compile Include="Objects\Vector.cs" />
+    <Compile Include="Objects\World.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\AudioSystem.cs" />
     <Compile Include="View\ViewPort.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="shader.fs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="crate.fs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -64,12 +75,20 @@
     <Content Include="glMatrix-0.9.5.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ground.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="webgl-utils.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="crate.vs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="shader.vs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
