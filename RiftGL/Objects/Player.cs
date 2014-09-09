@@ -6,7 +6,7 @@
     {
         public Player()
         {
-            this.Size = 7f;
+            this.Size = 2f;
         }
 
         public void SetCamera(Camera camera)

@@ -102,7 +102,7 @@
 
             try
             {
-                var imageBytes = File.ReadAllBytes("ground.png");
+                var imageBytes = File.ReadAllBytes("crate.png");
                 var objectUrl = Builtins.Global["JSIL"].GetObjectURLForBytes(imageBytes, "image/png");
                 imageElement.src = objectUrl;
             }
@@ -128,7 +128,7 @@
 
         protected override void OnDraw(Camera camera)
         {
-            // ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
+            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
             ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
             ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X), new[] { 1f, 0, 0 });
             ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y), new[] { 0, 1f, 0 });

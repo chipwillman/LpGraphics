@@ -209,10 +209,13 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T04 = JSIL.Memoize($asm01.System.Double)) ();
   };
   var $T05 = function () {
-    return ($T05 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+    return ($T05 = JSIL.Memoize($asm01.System.Object)) ();
   };
   var $T06 = function () {
     return ($T06 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
+  };
+  var $T07 = function () {
+    return ($T07 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
@@ -263,18 +266,23 @@ JSIL.DeclareNamespace("RiftGL.View");
       strafeSpeed = 15;
     }
     if (speed < -15) {
+      speed = -15;
     }
     if (strafeSpeed < -15) {
+      strafeSpeed = -15;
     }
     if (+(this.velocity).Length() > 0) {
       this.acceleration = $T01().op_Subtraction($S01().Construct(), $S02().CallStatic($T01(), "op_Multiply", null, this.velocity, 1.5));
     }
     this.velocity = $T01().op_Addition(this.velocity, $S02().CallStatic($T01(), "op_Multiply", null, this.acceleration, deltaTime));
+    this.position.X += Math.fround(Math.cos(this.Deg2Rad(+this.yaw + 90))) * strafeSpeed;
+    this.position.Z += Math.fround(Math.sin(this.Deg2Rad(+this.yaw + 90))) * strafeSpeed;
+    this.position.X += cosYaw * speed;
+    this.position.Z += sinYaw * speed;
     this.lookAt.X = +this.position.X + (cosYaw * cosPitch);
     this.lookAt.Y = +this.position.Y + sinPitch;
     this.lookAt.Z = +this.position.Z + (sinYaw * cosPitch);
-    var cameraMatrix = this.MakeLookAt(this.position, this.lookAt, this.up);
-    $T00().Matrices.ModelView = this.MakeInverse(cameraMatrix);
+    var cameraMatrix = $T00().GLMatrix4.lookAt(this.position, this.lookAt, this.up);
   };
 
   function Camera_Deg2Rad (a) {
@@ -295,19 +303,15 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function Camera_MakeInverse (m) {
     var m2 = +m[0];
-    var m3 = +m[1];
     var m4 = +m[2];
     var m5 = +m[3];
     var m6 = +m[4];
-    var m7 = +m[5];
     var m8 = +m[6];
     var m9 = +m[7];
     var m10 = +m[8];
-    var m11 = +m[9];
     var m12 = +m[10];
     var m13 = +m[11];
     var m14 = +m[12];
-    var m15 = +m[13];
     var m16 = +m[14];
     var m17 = +m[15];
     var tmp_0 = m12 * m17;
@@ -322,24 +326,20 @@ JSIL.DeclareNamespace("RiftGL.View");
     var tmp_9 = m12 * m5;
     var tmp_10 = m4 * m9;
     var tmp_11 = m8 * m5;
-    var tmp_12 = m10 * m15;
-    var tmp_13 = m14 * m11;
-    var tmp_14 = m6 * m15;
-    var tmp_15 = m14 * m7;
-    var tmp_16 = m6 * m11;
-    var tmp_17 = m10 * m7;
-    var tmp_18 = m2 * m15;
-    var tmp_19 = m14 * m3;
-    var tmp_20 = m2 * m11;
-    var tmp_21 = m10 * m3;
-    var tmp_22 = m2 * m7;
-    var tmp_23 = m6 * m3;
-    var t0 = (((tmp_0 * m7) + (tmp_3 * m11)) + (tmp_4 * m15)) - (((tmp_ * m7) + (tmp_2 * m11)) + (tmp_5 * m15));
-    var t = (((tmp_ * m3) + (tmp_6 * m11)) + (tmp_9 * m15)) - (((tmp_0 * m3) + (tmp_7 * m11)) + (tmp_8 * m15));
-    var t2 = (((tmp_2 * m3) + (tmp_7 * m7)) + (tmp_10 * m15)) - (((tmp_3 * m3) + (tmp_6 * m7)) + (tmp_11 * m15));
-    var t3 = (((tmp_5 * m3) + (tmp_8 * m7)) + (tmp_11 * m11)) - (((tmp_4 * m3) + (tmp_9 * m7)) + (tmp_10 * m11));
-    var d = +((1 / ((((m2 * t0) + (m6 * t)) + (m10 * t2)) + (m14 * t3))));
-    return JSIL.Array.New($T02(), [(d * t0), (d * t), (d * t2), (d * t3), (d * ((((tmp_ * m6) + (tmp_2 * m10)) + (tmp_5 * m14)) - (((tmp_0 * m6) + (tmp_3 * m10)) + (tmp_4 * m14)))), (d * ((((tmp_0 * m2) + (tmp_7 * m10)) + (tmp_8 * m14)) - (((tmp_ * m2) + (tmp_6 * m10)) + (tmp_9 * m14)))), (d * ((((tmp_3 * m2) + (tmp_6 * m6)) + (tmp_11 * m14)) - (((tmp_2 * m2) + (tmp_7 * m6)) + (tmp_10 * m14)))), (d * ((((tmp_4 * m2) + (tmp_9 * m6)) + (tmp_10 * m10)) - (((tmp_5 * m2) + (tmp_8 * m6)) + (tmp_11 * m10)))), (d * ((((tmp_12 * m9) + (tmp_15 * m13)) + (tmp_16 * m17)) - (((tmp_13 * m9) + (tmp_14 * m13)) + (tmp_17 * m17)))), (d * ((((tmp_13 * m5) + (tmp_18 * m13)) + (tmp_21 * m17)) - (((tmp_12 * m5) + (tmp_19 * m13)) + (tmp_20 * m17)))), (d * ((((tmp_14 * m5) + (tmp_19 * m9)) + (tmp_22 * m17)) - (((tmp_15 * m5) + (tmp_18 * m9)) + (tmp_23 * m17)))), (d * ((((tmp_17 * m5) + (tmp_20 * m9)) + (tmp_23 * m13)) - (((tmp_16 * m5) + (tmp_21 * m9)) + (tmp_22 * m13)))), (d * ((((tmp_14 * m12) + (tmp_17 * m16)) + (tmp_13 * m8)) - (((tmp_16 * m16) + (tmp_12 * m8)) + (tmp_15 * m12)))), (d * ((((tmp_20 * m16) + (tmp_12 * m4)) + (tmp_19 * m12)) - (((tmp_18 * m12) + (tmp_21 * m16)) + (tmp_13 * m4)))), (d * ((((tmp_18 * m8) + (tmp_23 * m16)) + (tmp_15 * m4)) - (((tmp_22 * m16) + (tmp_14 * m4)) + (tmp_19 * m8)))), (d * ((((tmp_22 * m12) + (tmp_16 * m4)) + (tmp_21 * m8)) - (((tmp_20 * m8) + (tmp_23 * m12)) + (tmp_17 * m4))))]);
+    var tmp_12 = m10 * +m[13];
+    var tmp_13 = m14 * +m[9];
+    var tmp_14 = m6 * +m[13];
+    var tmp_15 = m14 * +m[5];
+    var tmp_16 = m6 * +m[9];
+    var tmp_17 = m10 * +m[5];
+    var tmp_18 = m2 * +m[13];
+    var tmp_19 = m14 * +m[1];
+    var tmp_20 = m2 * +m[9];
+    var tmp_21 = m10 * +m[1];
+    var tmp_22 = m2 * +m[5];
+    var tmp_23 = m6 * +m[1];
+    var d = +((1 / ((((m2 * ((((tmp_0 * +m[5]) + (tmp_3 * +m[9])) + (tmp_4 * +m[13])) - (((tmp_ * +m[5]) + (tmp_2 * +m[9])) + (tmp_5 * +m[13])))) + (m6 * ((((tmp_ * +m[1]) + (tmp_6 * +m[9])) + (tmp_9 * +m[13])) - (((tmp_0 * +m[1]) + (tmp_7 * +m[9])) + (tmp_8 * +m[13]))))) + (m10 * ((((tmp_2 * +m[1]) + (tmp_7 * +m[5])) + (tmp_10 * +m[13])) - (((tmp_3 * +m[1]) + (tmp_6 * +m[5])) + (tmp_11 * +m[13]))))) + (m14 * ((((tmp_5 * +m[1]) + (tmp_8 * +m[5])) + (tmp_11 * +m[9])) - (((tmp_4 * +m[1]) + (tmp_9 * +m[5])) + (tmp_10 * +m[9])))))));
+    return JSIL.Array.New($T02(), [(d * ((((tmp_0 * +m[5]) + (tmp_3 * +m[9])) + (tmp_4 * +m[13])) - (((tmp_ * +m[5]) + (tmp_2 * +m[9])) + (tmp_5 * +m[13])))), (d * ((((tmp_ * +m[1]) + (tmp_6 * +m[9])) + (tmp_9 * +m[13])) - (((tmp_0 * +m[1]) + (tmp_7 * +m[9])) + (tmp_8 * +m[13])))), (d * ((((tmp_2 * +m[1]) + (tmp_7 * +m[5])) + (tmp_10 * +m[13])) - (((tmp_3 * +m[1]) + (tmp_6 * +m[5])) + (tmp_11 * +m[13])))), (d * ((((tmp_5 * +m[1]) + (tmp_8 * +m[5])) + (tmp_11 * +m[9])) - (((tmp_4 * +m[1]) + (tmp_9 * +m[5])) + (tmp_10 * +m[9])))), (d * ((((tmp_ * m6) + (tmp_2 * m10)) + (tmp_5 * m14)) - (((tmp_0 * m6) + (tmp_3 * m10)) + (tmp_4 * m14)))), (d * ((((tmp_0 * m2) + (tmp_7 * m10)) + (tmp_8 * m14)) - (((tmp_ * m2) + (tmp_6 * m10)) + (tmp_9 * m14)))), (d * ((((tmp_3 * m2) + (tmp_6 * m6)) + (tmp_11 * m14)) - (((tmp_2 * m2) + (tmp_7 * m6)) + (tmp_10 * m14)))), (d * ((((tmp_4 * m2) + (tmp_9 * m6)) + (tmp_10 * m10)) - (((tmp_5 * m2) + (tmp_8 * m6)) + (tmp_11 * m10)))), (d * ((((tmp_12 * m9) + (tmp_15 * m13)) + (tmp_16 * m17)) - (((tmp_13 * m9) + (tmp_14 * m13)) + (tmp_17 * m17)))), (d * ((((tmp_13 * m5) + (tmp_18 * m13)) + (tmp_21 * m17)) - (((tmp_12 * m5) + (tmp_19 * m13)) + (tmp_20 * m17)))), (d * ((((tmp_14 * m5) + (tmp_19 * m9)) + (tmp_22 * m17)) - (((tmp_15 * m5) + (tmp_18 * m9)) + (tmp_23 * m17)))), (d * ((((tmp_17 * m5) + (tmp_20 * m9)) + (tmp_23 * m13)) - (((tmp_16 * m5) + (tmp_21 * m9)) + (tmp_22 * m13)))), (d * ((((tmp_14 * m12) + (tmp_17 * m16)) + (tmp_13 * m8)) - (((tmp_16 * m16) + (tmp_12 * m8)) + (tmp_15 * m12)))), (d * ((((tmp_20 * m16) + (tmp_12 * m4)) + (tmp_19 * m12)) - (((tmp_18 * m12) + (tmp_21 * m16)) + (tmp_13 * m4)))), (d * ((((tmp_18 * m8) + (tmp_23 * m16)) + (tmp_15 * m4)) - (((tmp_22 * m16) + (tmp_14 * m4)) + (tmp_19 * m8)))), (d * ((((tmp_22 * m12) + (tmp_16 * m4)) + (tmp_21 * m8)) - (((tmp_20 * m8) + (tmp_23 * m12)) + (tmp_17 * m4))))]);
   };
 
   function Camera_MakeLookAt (cameraPosition, target, up) {
@@ -1387,7 +1387,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     arg_D1_0.imageElement = $T02().Document.createElement("img");
     $closure0.imageElement.onload = $T0D().New($closure0, $T0C().prototype.$lInitTexture$gb__29);
     try {
-      var imageBytes = $T06().ReadAllBytes("ground.png");
+      var imageBytes = $T06().ReadAllBytes("crate.png");
       var objectUrl = JSIL.GlobalNamespace.JSIL.GetObjectURLForBytes(imageBytes, "image/png");
       $closure0.imageElement.src = objectUrl;
     } catch ($exception) {
@@ -1661,7 +1661,7 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function Player__ctor () {
     $T00().prototype._ctor.call(this);
-    this.GlObject$Size$value = 7;
+    this.GlObject$Size$value = 2;
   };
 
   function Player_DetachCamera () {
@@ -1790,7 +1790,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Field({Static:false, Public:true }, "Vertices", $jsilcore.TypeRef("System.Array", [$.Single])); 
     $.Field({Static:false, Public:true }, "TextureCoords", $jsilcore.TypeRef("System.Array", [$.Single])); 
     $.Field({Static:false, Public:true }, "Normals", $jsilcore.TypeRef("System.Array", [$.Single])); 
-    $.Field({Static:false, Public:true }, "Indices", $jsilcore.TypeRef("System.Array", [$.Int32])); 
+    $.Field({Static:false, Public:true }, "Indices", $jsilcore.TypeRef("System.Array", [$.UInt16])); 
     return function (newThisType) { $thisType = newThisType; }; 
   });
 
@@ -1822,46 +1822,46 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T06 = JSIL.Memoize($asm01.System.Random)) ();
   };
   var $T07 = function () {
-    return ($T07 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+    return ($T07 = JSIL.Memoize($asm01.System.Math)) ();
   };
   var $T08 = function () {
-    return ($T08 = JSIL.Memoize($asm01.System.Math)) ();
+    return ($T08 = JSIL.Memoize($asm01.System.Double)) ();
   };
   var $T09 = function () {
-    return ($T09 = JSIL.Memoize($asm01.System.Double)) ();
+    return ($T09 = JSIL.Memoize($asm02.RiftGL.Objects.HeightMap)) ();
   };
   var $T0A = function () {
-    return ($T0A = JSIL.Memoize($asm02.RiftGL.Objects.HeightMap)) ();
+    return ($T0A = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm01.System.UInt16))) ();
   };
   var $T0B = function () {
-    return ($T0B = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm02.RiftGL.Objects.Vector))) ();
+    return ($T0B = JSIL.Memoize($asm01.System.Collections.Generic.IEnumerable$b1.Of($asm01.System.UInt16))) ();
   };
   var $T0C = function () {
-    return ($T0C = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm01.System.Single))) ();
+    return ($T0C = JSIL.Memoize($asm01.System.UInt16)) ();
   };
   var $T0D = function () {
-    return ($T0D = JSIL.Memoize($asm01.System.Collections.Generic.IEnumerable$b1.Of($asm01.System.Single))) ();
+    return ($T0D = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm02.RiftGL.Objects.Vector))) ();
   };
   var $T0E = function () {
-    return ($T0E = JSIL.Memoize($asm01.System.Object)) ();
+    return ($T0E = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T0F = function () {
-    return ($T0F = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
+    return ($T0F = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm01.System.Single))) ();
   };
   var $T10 = function () {
-    return ($T10 = JSIL.Memoize($asm01.System.Collections.Generic.List$b1.Of($asm01.System.Int32))) ();
+    return ($T10 = JSIL.Memoize($asm01.System.Collections.Generic.IEnumerable$b1.Of($asm01.System.Single))) ();
   };
   var $T11 = function () {
-    return ($T11 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+    return ($T11 = JSIL.Memoize($asm01.System.Object)) ();
   };
   var $T12 = function () {
-    return ($T12 = JSIL.Memoize($asm01.System.Console)) ();
+    return ($T12 = JSIL.Memoize($asm02.RiftGL.Objects.Crate)) ();
   };
   var $T13 = function () {
-    return ($T13 = JSIL.Memoize($asm02.RiftGL.Objects.Crate)) ();
+    return ($T13 = JSIL.Memoize($asm01.System.Boolean)) ();
   };
   var $T14 = function () {
-    return ($T14 = JSIL.Memoize($asm01.System.Boolean)) ();
+    return ($T14 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
   var $T15 = function () {
     return ($T15 = JSIL.Memoize($asm01.System.Exception)) ();
@@ -1879,31 +1879,31 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T19 = JSIL.Memoize($asm01.System.IO.File)) ();
   };
   var $T1A = function () {
-    return ($T1A = JSIL.Memoize(System.Array.Of($asm01.System.UInt16))) ();
+    return ($T1A = JSIL.Memoize($asm01.System.Console)) ();
   };
   var $T1B = function () {
-    return ($T1B = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
+    return ($T1B = JSIL.Memoize(System.Array.Of($asm01.System.UInt16))) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Random"), [$asm01.TypeRef("System.Int32")]))) ();
   };
   var $S01 = function () {
-    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
-        $asm01.TypeRef("System.Single"), $asm01.TypeRef("System.Single"), 
-        $asm01.TypeRef("System.Single")
-      ]))) ();
+    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Collections.Generic.List`1", [$asm01.TypeRef("System.UInt16")]), null))) ();
   };
   var $S02 = function () {
     return ($S02 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Collections.Generic.List`1", [$asm02.TypeRef("RiftGL.Objects.Vector")]), null))) ();
   };
   var $S03 = function () {
-    return ($S03 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), null))) ();
+    return ($S03 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
+        $asm01.TypeRef("System.Single"), $asm01.TypeRef("System.Single"), 
+        $asm01.TypeRef("System.Single")
+      ]))) ();
   };
   var $S04 = function () {
-    return ($S04 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Collections.Generic.List`1", [$asm01.TypeRef("System.Single")]), null))) ();
+    return ($S04 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), null))) ();
   };
   var $S05 = function () {
-    return ($S05 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Collections.Generic.List`1", [$asm01.TypeRef("System.Int32")]), null))) ();
+    return ($S05 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Collections.Generic.List`1", [$asm01.TypeRef("System.Single")]), null))) ();
   };
 
   function Terrain__ctor () {
@@ -1916,26 +1916,136 @@ JSIL.DeclareNamespace("RiftGL.View");
     this.Terrain$Random$value = $S00().Construct(seed);
     this.Terrain$Width$value = (w | 0);
     this.Terrain$scanDepth$value = 80;
-    this.Terrain$terrainMul$value = 50;
+    this.Terrain$terrainMul$value = 2;
     this.Terrain$textureMul$value = 0.25;
-    this.Terrain$heightMul$value = 175;
+    this.Terrain$heightMul$value = 5;
     this.fogColor = JSIL.Array.New($T04(), 4);
     this.fogColor[0] = 0.75;
     this.fogColor[1] = 0.9;
     this.fogColor[2] = 1;
     this.fogColor[3] = 1;
     this.Terrain$HeightMap$value = null;
-    this.GlObject$Position$value = $S01().Construct(0, 0, 0);
-    this.GlObject$Velocity$value = $S01().Construct(0, 0, 0);
-    this.GlObject$Acceleration$value = $S01().Construct(0, 0, 0);
     this.GlObject$Size$value = Math.fround(Math.sqrt(((((+(this.Terrain$Width$value) * +this.Terrain$terrainMul$value) * +(this.Terrain$Width$value)) * +this.Terrain$terrainMul$value) + (((+(this.Terrain$Width$value) * +this.Terrain$terrainMul$value) * +(this.Terrain$Width$value)) * +this.Terrain$terrainMul$value))));
-    this.Terrain$HeightMap$value = (new ($T0A())()).__Initialize__({
+    this.Terrain$HeightMap$value = (new ($T09())()).__Initialize__({
         Values: JSIL.Array.New($T04(), Math.imul(this.Terrain$Width$value, this.Terrain$Width$value))}
     );
-    this.InitShaders(camera);
-    this.InitTexture(camera);
     this.MakeTerrainPlasma(this.Terrain$HeightMap$value, this.Terrain$Width$value, rFactor);
-    this.InitBuffers(camera);
+    if (camera !== null) {
+      this.InitShaders(camera);
+      this.InitTexture(camera);
+      this.InitBuffers(camera);
+    }
+  };
+
+  function Terrain_CreateIndices () {
+    var $temp00;
+    var indices = $S01().Construct();
+    var lineTriangles = $S01().Construct();
+
+    for (var i = 0; i < (((this.Terrain$Width$value | 0) - 1) | 0); i = ((i + 1) | 0)) {
+      $T0A().prototype.AddRange.call(lineTriangles, $T0B().$Cast(JSIL.Array.New($T0C(), [((((this.Terrain$Width$value | 0) + i) | 0) & 0xFFFF), (i & 0xFFFF), ((((((this.Terrain$Width$value | 0) + i) | 0) + 1) | 0) & 0xFFFF)])));
+      $T0A().prototype.AddRange.call(lineTriangles, $T0B().$Cast(JSIL.Array.New($T0C(), [(i & 0xFFFF), ((((((this.Terrain$Width$value | 0) + i) | 0) + 1) | 0) & 0xFFFF), (((i + 1) | 0) & 0xFFFF)])));
+    }
+
+    for (i = 0; i < (((this.Terrain$Width$value | 0) - 1) | 0); i = ((i + 1) | 0)) {
+
+      for (var a$0 = lineTriangles._items, i$0 = 0, l$0 = (lineTriangles._size | 0); i$0 < l$0; ($temp00 = i$0, 
+          i$0 = ((i$0 + 1) | 0), 
+          $temp00)) {
+        var index = a$0[i$0];
+        indices.Add((((index + Math.imul(i, this.Terrain$Width$value)) | 0) & 0xFFFF));
+      }
+    }
+    this.TerrainData.Indices = $T0A().prototype.ToArray.call(indices);
+  };
+
+  function Terrain_CreateVertesArray () {
+    var vertexBuffer = $S02().Construct();
+    var textureBuffer = $S02().Construct();
+    var textureU = +(this.Terrain$Width$value) * 0.1;
+    var textureV = +(this.Terrain$Width$value) * 0.1;
+
+    for (var i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
+
+      for (var j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
+        var scaleR = +((+j / (+(this.Terrain$Width$value) - 1)));
+        var scaleC = +((+i / (+(this.Terrain$Width$value) - 1)));
+        var y = +this.Terrain$HeightMap$value.HeightMap$Values$value[((Math.imul(i, this.Terrain$Width$value) + j) | 0)] * +this.Terrain$heightMul$value;
+        var z = -32 + (scaleC * 64);
+        vertexBuffer.Add($S03().Construct((-32 + (scaleR * 64)), y, z));
+        var u = textureU * scaleR;
+        var v = textureV * scaleC;
+        textureBuffer.Add($S03().Construct(u, v, 0));
+      }
+    }
+    var normals = $S02().Construct();
+
+    for (i = 0; i < (((this.Terrain$Width$value | 0) - 1) | 0); i = ((i + 1) | 0)) {
+
+      for (j = 0; j < (((this.Terrain$Width$value | 0) - 1) | 0); j = ((j + 1) | 0)) {
+        var t0 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + j) | 0));
+        var t = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + j) | 0));
+        var t2 = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
+        var t3 = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
+        var t4 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
+        var t5 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + j) | 0));
+        var norm0 = $T0E().op_ExclusiveOr(
+          $T0E().op_Subtraction(t0, t), 
+          $T0E().op_Subtraction(t, t2)
+        );
+        var norm = $T0E().op_ExclusiveOr(
+          $T0E().op_Subtraction(t3, t4), 
+          $T0E().op_Subtraction(t4, t5)
+        );
+        $T0D().prototype.AddRange.call(normals, JSIL.Array.New($T0E(), [norm0, norm]));
+      }
+    }
+    var finalNormals = $S02().Construct();
+
+    for (i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
+
+      for (j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
+        var finalNormal = $S04().Construct();
+        if (!((j === 0) || (i === 0))) {
+          var vector = normals.get_Item(((((i - 1) | 0) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0));
+          var vector2 = normals.get_Item(((((((i - 1) | 0) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0) + 1) | 0));
+          finalNormal = $T0E().op_Addition(finalNormal, $T0E().op_Addition(vector, vector2));
+        }
+        if (!((i === 0) || (j === (((this.Terrain$Width$value | 0) - 1) | 0)))) {
+          var vector3 = normals.get_Item(((Math.imul(((i - 1) | 0), 3) + Math.imul(j, this.Terrain$Width$value)) | 0));
+          finalNormal = $T0E().op_Addition(finalNormal, vector3);
+        }
+        if (!((i === (((this.Terrain$Width$value | 0) - 1) | 0)) || (j === (((this.Terrain$Width$value | 0) - 1) | 0)))) {
+          vector = normals.get_Item(((Math.imul(i, 3) + Math.imul(j, this.Terrain$Width$value)) | 0));
+          vector2 = normals.get_Item(((((Math.imul(i, 3) + Math.imul(j, this.Terrain$Width$value)) | 0) + 1) | 0));
+          finalNormal = $T0E().op_Addition(finalNormal, $T0E().op_Addition(vector, vector2));
+        }
+        if (!((i === (((this.Terrain$Width$value | 0) - 1) | 0)) || (j === 0))) {
+          vector3 = normals.get_Item(((Math.imul(i, 3) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0));
+          finalNormal = $T0E().op_Addition(finalNormal, vector3);
+        }
+        finalNormal.Normalize();
+        finalNormals.Add(finalNormal);
+      }
+    }
+    var vertexDataBuffer = $S05().Construct();
+    var normalsDataBuffer = $S05().Construct();
+    var textureDataBuffer = $S05().Construct();
+
+    for (i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
+
+      for (j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
+        var vertex = vertexBuffer.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
+        var texture = textureBuffer.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
+        var normal = finalNormals.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
+        $T0F().prototype.AddRange.call(textureDataBuffer, $T10().$Cast(JSIL.Array.New($T04(), [texture.X, texture.Y])));
+        $T0F().prototype.AddRange.call(normalsDataBuffer, $T10().$Cast(JSIL.Array.New($T04(), [normal.X, normal.Y, normal.Z])));
+        $T0F().prototype.AddRange.call(vertexDataBuffer, $T10().$Cast(JSIL.Array.New($T04(), [vertex.X, vertex.Y, vertex.Z])));
+      }
+    }
+    this.TerrainData.Vertices = $T0F().prototype.ToArray.call(vertexDataBuffer);
+    this.TerrainData.Normals = $T0F().prototype.ToArray.call(normalsDataBuffer);
+    this.TerrainData.TextureCoords = $T0F().prototype.ToArray.call(textureDataBuffer);
   };
 
   function Terrain_DegreesToRadians (degrees) {
@@ -1971,8 +2081,8 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_GetHeight (x, z) {
-    var projCameraX = +((Math.fround(x) / +this.Terrain$terrainMul$value));
-    var projCameraZ = +((Math.fround(z) / +this.Terrain$terrainMul$value));
+    var projCameraX = Math.fround(x);
+    var projCameraZ = Math.fround(z);
     var col0 = ((projCameraX) | 0);
     var row0 = ((projCameraZ) | 0);
     var col = ((col0 + 1) | 0);
@@ -2006,146 +2116,44 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_InitBuffers (camera) {
-    var vertexBuffer = $S02().Construct();
-    var textureBuffer = $S02().Construct();
-    var textureU = +(this.Terrain$Width$value) * 0.1;
-    var textureV = +(this.Terrain$Width$value) * 0.1;
-
-    for (var i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
-
-      for (var j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
-        var scaleC = +((+j / (+(this.Terrain$Width$value) - 1)));
-        var scaleR = +((+i / (+(this.Terrain$Width$value) - 1)));
-        var y = +this.Terrain$HeightMap$value.HeightMap$Values$value[((Math.imul(i, this.Terrain$Width$value) + j) | 0)];
-        var z = -0.5 + scaleR;
-        vertexBuffer.Add($S01().Construct((-0.5 + scaleC), y, z));
-        var u = textureU * scaleC;
-        var v = textureV * scaleR;
-        textureBuffer.Add($S01().Construct(u, v, 0));
-      }
-    }
-    var normals = $S02().Construct();
-
-    for (i = 0; i < (((this.Terrain$Width$value | 0) - 1) | 0); i = ((i + 1) | 0)) {
-
-      for (j = 0; j < (((this.Terrain$Width$value | 0) - 1) | 0); j = ((j + 1) | 0)) {
-        var t0 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + j) | 0));
-        var t = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + j) | 0));
-        var t2 = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
-        var t3 = vertexBuffer.get_Item(((Math.imul(((i + 1) | 0), this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
-        var t4 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + ((j + 1) | 0)) | 0));
-        var t5 = vertexBuffer.get_Item(((Math.imul(i, this.Terrain$Width$value) + j) | 0));
-        var norm0 = $T07().op_ExclusiveOr(
-          $T07().op_Subtraction(t0, t), 
-          $T07().op_Subtraction(t, t2)
-        );
-        var norm = $T07().op_ExclusiveOr(
-          $T07().op_Subtraction(t3, t4), 
-          $T07().op_Subtraction(t4, t5)
-        );
-        $T0B().prototype.AddRange.call(normals, JSIL.Array.New($T07(), [norm0, norm]));
-      }
-    }
-    var finalNormals = $S02().Construct();
-
-    for (i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
-
-      for (j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
-        var finalNormal = $S03().Construct();
-        if (!((j === 0) || (i === 0))) {
-          var vector = normals.get_Item(((((i - 1) | 0) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0));
-          var vector2 = normals.get_Item(((((((i - 1) | 0) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0) + 1) | 0));
-          finalNormal = $T07().op_Addition(finalNormal, $T07().op_Addition(vector, vector2));
-        }
-        if (!((i === 0) || (j === (((this.Terrain$Width$value | 0) - 1) | 0)))) {
-          var vector3 = normals.get_Item(((Math.imul(((i - 1) | 0), 3) + Math.imul(j, this.Terrain$Width$value)) | 0));
-          finalNormal = $T07().op_Addition(finalNormal, vector3);
-        }
-        if (!((i === (((this.Terrain$Width$value | 0) - 1) | 0)) || (j === (((this.Terrain$Width$value | 0) - 1) | 0)))) {
-          vector = normals.get_Item(((Math.imul(i, 3) + Math.imul(j, this.Terrain$Width$value)) | 0));
-          vector2 = normals.get_Item(((((Math.imul(i, 3) + Math.imul(j, this.Terrain$Width$value)) | 0) + 1) | 0));
-          finalNormal = $T07().op_Addition(finalNormal, $T07().op_Addition(vector, vector2));
-        }
-        if (!((i === (((this.Terrain$Width$value | 0) - 1) | 0)) || (j === 0))) {
-          vector3 = normals.get_Item(((Math.imul(i, 3) + Math.imul(((j - 1) | 0), this.Terrain$Width$value)) | 0));
-          finalNormal = $T07().op_Addition(finalNormal, vector3);
-        }
-        finalNormal.Normalize();
-        finalNormals.Add(finalNormal);
-      }
-    }
-    var vertexDataBuffer = $S04().Construct();
-    var normalsDataBuffer = $S04().Construct();
-    var textureDataBuffer = $S04().Construct();
-
-    for (i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
-
-      for (j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
-        var vertex = vertexBuffer.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
-        var texture = textureBuffer.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
-        var normal = finalNormals.get_Item(((j + Math.imul(i, this.Terrain$Width$value)) | 0));
-        $T0C().prototype.AddRange.call(textureDataBuffer, $T0D().$Cast(JSIL.Array.New($T04(), [texture.X, texture.Y])));
-        $T0C().prototype.AddRange.call(normalsDataBuffer, $T0D().$Cast(JSIL.Array.New($T04(), [normal.X, normal.Y, normal.Z])));
-        $T0C().prototype.AddRange.call(vertexDataBuffer, $T0D().$Cast(JSIL.Array.New($T04(), [vertex.X, vertex.Y, vertex.Z])));
-      }
-    }
+    this.CreateVertesArray();
     var gl = camera.GL;
     this.Buffers.VertexPositions = gl.createBuffer();
-    this.TerrainData.Vertices = $T0C().prototype.ToArray.call(vertexDataBuffer);
-    this.TerrainData.Normals = $T0C().prototype.ToArray.call(normalsDataBuffer);
-    this.TerrainData.TextureCoords = $T0C().prototype.ToArray.call(textureDataBuffer);
-    var arg_64D_2 = gl;
-    arg_64D_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
-    var arg_778_2 = gl;
-    var arg_778_3 = gl.ARRAY_BUFFER;
-    arg_778_2.bufferData(arg_778_3, this.TerrainData.Vertices, gl.STATIC_DRAW);
-    $T0F().Buffers.VertexNormals = (camera.GL).createBuffer();
-    var arg_8AB_2 = gl;
-    arg_8AB_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
-    var arg_9DE_2 = gl;
-    var arg_9DE_3 = camera.GL.ARRAY_BUFFER;
-    arg_9DE_2.bufferData(arg_9DE_3, this.TerrainData.Normals, camera.GL.STATIC_DRAW);
-    $T0F().Buffers.TextureCoords = (camera.GL).createBuffer();
-    var arg_B11_2 = gl;
-    arg_B11_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
-    var arg_C44_2 = gl;
-    var arg_C44_3 = camera.GL.ARRAY_BUFFER;
-    arg_C44_2.bufferData(arg_C44_3, this.TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
-    var indices = $S05().Construct();
-
-    for (i = 0; i < (((this.Terrain$Width$value | 0) - 1) | 0); i = ((i + 1) | 0)) {
-
-      for (j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
-
-        for (var k = 0; k < 2; k = ((k + 1) | 0)) {
-          var row = ((i + ((1 - k) | 0)) | 0);
-          var index = ((Math.imul(row, this.Terrain$Width$value) + j) | 0);
-          if (index > (((this.TerrainData.Vertices.length | 0) / 3) | 0)) {
-            $T12().WriteLine("Outside???");
-          } else {
-            indices.Add(index);
-          }
-        }
-      }
-    }
+    this.Buffers.VertexNormals = (camera.GL).createBuffer();
+    this.Buffers.TextureCoords = (camera.GL).createBuffer();
+    var arg_1E7_2 = gl;
+    arg_1E7_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
+    var arg_303_2 = gl;
+    var arg_303_3 = gl.ARRAY_BUFFER;
+    arg_303_2.bufferData(arg_303_3, this.TerrainData.Vertices, gl.STATIC_DRAW);
+    var arg_3CB_2 = gl;
+    arg_3CB_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+    var arg_4F1_2 = gl;
+    var arg_4F1_3 = camera.GL.ARRAY_BUFFER;
+    arg_4F1_2.bufferData(arg_4F1_3, this.TerrainData.Normals, camera.GL.STATIC_DRAW);
+    var arg_5B9_2 = gl;
+    arg_5B9_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+    var arg_6DF_2 = gl;
+    var arg_6DF_3 = camera.GL.ARRAY_BUFFER;
+    arg_6DF_2.bufferData(arg_6DF_3, this.TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
+    this.CreateIndices();
     this.Buffers.Indices = gl.createBuffer();
-    this.TerrainData.Indices = $T10().prototype.ToArray.call(indices);
-    var arg_E31_2 = gl;
-    arg_E31_2.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
-    var arg_F5C_2 = gl;
-    var arg_F5C_3 = gl.ELEMENT_ARRAY_BUFFER;
-    arg_F5C_2.bufferData(arg_F5C_3, this.TerrainData.Indices, gl.STATIC_DRAW);
+    var arg_804_2 = gl;
+    arg_804_2.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+    var arg_920_2 = gl;
+    var arg_920_3 = gl.ELEMENT_ARRAY_BUFFER;
+    arg_920_2.bufferData(arg_920_3, this.TerrainData.Indices, gl.STATIC_DRAW);
   };
 
   function Terrain_InitShaders (viewPort) {
-    var fragmentShader = $T13().CompileShader(viewPort, "crate.fs");
-    var vertexShader = $T13().CompileShader(viewPort, "crate.vs");
+    var fragmentShader = $T12().CompileShader(viewPort, "crate.fs");
+    var vertexShader = $T12().CompileShader(viewPort, "crate.vs");
     $thisType.TerrainShaderProgram = (viewPort.GL).createProgram();
     (viewPort.GL).attachShader($thisType.TerrainShaderProgram, vertexShader);
     (viewPort.GL).attachShader($thisType.TerrainShaderProgram, fragmentShader);
     (viewPort.GL).linkProgram($thisType.TerrainShaderProgram);
     var arg_2BD_2 = viewPort.GL;
-    if (!$T14().$Cast(arg_2BD_2.getProgramParameter($thisType.TerrainShaderProgram, viewPort.GL.LINK_STATUS))) {
+    if (!$T13().$Cast(arg_2BD_2.getProgramParameter($thisType.TerrainShaderProgram, viewPort.GL.LINK_STATUS))) {
       JSIL.GlobalNamespace.alert("Could not link shader");
     } else {
       (viewPort.GL).useProgram($thisType.TerrainShaderProgram);
@@ -2158,14 +2166,14 @@ JSIL.DeclareNamespace("RiftGL.View");
       $thisType.TerrainShaderProgram.TextureCoord = (viewPort.GL).getAttribLocation($thisType.TerrainShaderProgram, "aTextureCoord");
       var arg_83C_2 = viewPort.GL;
       arg_83C_2.enableVertexAttribArray($thisType.TerrainShaderProgram.TextureCoord);
-      $T0F().Uniforms.ProjectionMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uPMatrix");
-      $T0F().Uniforms.ModelViewMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uMVMatrix");
-      $T0F().Uniforms.NormalMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uNMatrix");
-      $T0F().Uniforms.Sampler = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uSampler");
-      $T0F().Uniforms.UseLighting = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uUseLighting");
-      $T0F().Uniforms.AmbientColor = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uAmbientColor");
-      $T0F().Uniforms.LightingDirection = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uLightingDirection");
-      $T0F().Uniforms.DirectionalColor = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uDirectionalColor");
+      $T14().Uniforms.ProjectionMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uPMatrix");
+      $T14().Uniforms.ModelViewMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uMVMatrix");
+      $T14().Uniforms.NormalMatrix = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uNMatrix");
+      $T14().Uniforms.Sampler = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uSampler");
+      $T14().Uniforms.UseLighting = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uUseLighting");
+      $T14().Uniforms.AmbientColor = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uAmbientColor");
+      $T14().Uniforms.LightingDirection = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uLightingDirection");
+      $T14().Uniforms.DirectionalColor = (viewPort.GL).getUniformLocation($thisType.TerrainShaderProgram, "uDirectionalColor");
     }
   };
 
@@ -2175,47 +2183,16 @@ JSIL.DeclareNamespace("RiftGL.View");
     $closure0.$l$g4__this = this;
     this.TerrainTexture = ($closure0.camera.GL).createTexture();
     var arg_D9_0 = $closure0;
-    arg_D9_0.imageElement = $T0F().Document.createElement("img");
+    arg_D9_0.imageElement = $T14().Document.createElement("img");
     $closure0.imageElement.onload = $T17().New($closure0, $T16().prototype.$lInitTexture$gb__9);
     try {
       var imageBytes = $T19().ReadAllBytes("ground.png");
       var objectUrl = JSIL.GlobalNamespace.JSIL.GetObjectURLForBytes(imageBytes, "image/png");
       $closure0.imageElement.src = objectUrl;
     } catch ($exception) {
-      $T12().WriteLine("Falling back to a second HTTP request for crate.png because Object URLs are not available");
+      $T1A().WriteLine("Falling back to a second HTTP request for crate.png because Object URLs are not available");
       $closure0.imageElement.src = "Files/ground.png";
     }
-  };
-
-  function Terrain_InvalidOnDraw (camera) {
-    var gl = camera.GL;
-    var arg_D5_2 = gl;
-    arg_D5_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
-    var arg_21B_2 = gl;
-    arg_21B_2.vertexAttribPointer(
-      $thisType.TerrainShaderProgram.VertexPosition, 
-      3, 
-      gl.FLOAT, 
-      false, 
-      Math.imul(4, 3), 
-      0
-    );
-    var arg_343_2 = gl;
-    var arg_343_3 = gl.ARRAY_BUFFER;
-    arg_343_2.bufferData(arg_343_3, this.TerrainData.Vertices, gl.STATIC_DRAW);
-    var arg_40E_2 = gl;
-    arg_40E_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.Indices);
-    var arg_536_2 = gl;
-    var arg_536_3 = gl.ELEMENT_ARRAY_BUFFER;
-    arg_536_2.bufferData(arg_536_3, this.TerrainData.Indices, gl.STATIC_DRAW);
-    $T0F().GLMatrix4.toInverseMat3($T0F().Matrices.ModelView, $T0F().Matrices.Normal);
-    $T0F().GLMatrix3.transpose($T0F().Matrices.Normal);
-    gl.uniformMatrix4fv($T0F().Uniforms.ProjectionMatrix, false, $T0F().Matrices.Projection);
-    gl.uniformMatrix4fv($T0F().Uniforms.ModelViewMatrix, false, $T0F().Matrices.ModelView);
-    var arg_88C_2 = gl;
-    var arg_88C_3 = gl.TRIANGLE_STRIPS;
-    var arg_88C_4 = ((Math.imul(Math.imul(this.Terrain$Width$value, (((this.Terrain$Width$value | 0) - 1) | 0)), 2) + (((this.Terrain$Width$value | 0) - 1) | 0)) | 0);
-    arg_88C_2.drawElements(arg_88C_3, arg_88C_4, gl.UNSIGNED_INT, 0);
   };
 
   function Terrain_MakeTerrainPlasma (field, size, rough) {
@@ -2277,56 +2254,55 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_OnDraw (camera) {
-    $T0F().GLMatrix4.translate($T0F().Matrices.ModelView, JSIL.Array.New($T04(), [this.GlObject$Position$value.X, this.GlObject$Position$value.Y, this.GlObject$Position$value.Z]));
-    var arg_171_2 = camera.GL;
-    arg_171_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
-    var arg_26A_2 = camera.GL;
-    arg_26A_2.vertexAttribPointer(
-      this.TerrainData.Vertices, 
+    var arg_C8_2 = camera.GL;
+    arg_C8_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
+    var arg_209_2 = camera.GL;
+    arg_209_2.vertexAttribPointer(
+      $thisType.TerrainShaderProgram.VertexPosition, 
       3, 
       camera.GL.FLOAT, 
       false, 
       0, 
       0
     );
-    var arg_337_2 = camera.GL;
-    arg_337_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
-    var arg_430_2 = camera.GL;
-    arg_430_2.vertexAttribPointer(
-      this.TerrainData.Normals, 
+    var arg_2D6_2 = camera.GL;
+    arg_2D6_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+    var arg_417_2 = camera.GL;
+    arg_417_2.vertexAttribPointer(
+      $thisType.TerrainShaderProgram.VertexNormal, 
       3, 
       camera.GL.FLOAT, 
       false, 
       0, 
       0
     );
-    var arg_4FD_2 = camera.GL;
-    arg_4FD_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
-    var arg_5F6_2 = camera.GL;
-    arg_5F6_2.vertexAttribPointer(
-      this.TerrainData.TextureCoords, 
+    var arg_4E4_2 = camera.GL;
+    arg_4E4_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+    var arg_625_2 = camera.GL;
+    arg_625_2.vertexAttribPointer(
+      $thisType.TerrainShaderProgram.TextureCoord, 
       2, 
       camera.GL.FLOAT, 
       false, 
       0, 
       0
     );
-    var arg_6AE_2 = camera.GL;
-    arg_6AE_2.activeTexture(camera.GL.TEXTURE0);
-    var arg_776_2 = camera.GL;
-    arg_776_2.bindTexture(camera.GL.TEXTURE_2D, this.TerrainTexture);
-    (camera.GL).uniform1i($T0F().Uniforms.Sampler, 0);
-    var arg_8BB_2 = camera.GL;
-    arg_8BB_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, $T0F().Buffers.Indices);
-    (camera.GL).uniformMatrix4fv($T0F().Uniforms.ProjectionMatrix, false, $T0F().Matrices.Projection);
-    (camera.GL).uniformMatrix4fv($T0F().Uniforms.ModelViewMatrix, false, $T0F().Matrices.ModelView);
-    $T0F().GLMatrix4.toInverseMat3($T0F().Matrices.ModelView, $T0F().Matrices.Normal);
-    $T0F().GLMatrix3.transpose($T0F().Matrices.Normal);
-    (camera.GL).uniformMatrix3fv($T0F().Uniforms.NormalMatrix, false, $T0F().Matrices.Normal);
-    var arg_C82_2 = camera.GL;
-    var arg_C82_3 = camera.GL.TRIANGLES;
-    var arg_C82_4 = ($T1B().Indices.length | 0);
-    arg_C82_2.drawElements(arg_C82_3, arg_C82_4, camera.GL.UNSIGNED_SHORT, 0);
+    var arg_6DD_2 = camera.GL;
+    arg_6DD_2.activeTexture(camera.GL.TEXTURE0);
+    var arg_7A5_2 = camera.GL;
+    arg_7A5_2.bindTexture(camera.GL.TEXTURE_2D, this.TerrainTexture);
+    (camera.GL).uniform1i($T14().Uniforms.Sampler, 0);
+    (camera.GL).uniformMatrix4fv($T14().Uniforms.ProjectionMatrix, false, $T14().Matrices.Projection);
+    (camera.GL).uniformMatrix4fv($T14().Uniforms.ModelViewMatrix, false, $T14().Matrices.ModelView);
+    $T14().GLMatrix4.toInverseMat3($T14().Matrices.ModelView, $T14().Matrices.Normal);
+    $T14().GLMatrix3.transpose($T14().Matrices.Normal);
+    (camera.GL).uniformMatrix3fv($T14().Uniforms.NormalMatrix, false, $T14().Matrices.Normal);
+    var arg_B80_2 = camera.GL;
+    arg_B80_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+    var arg_CB8_2 = camera.GL;
+    var arg_CB8_3 = camera.GL.TRIANGLES;
+    var arg_CB8_4 = (this.TerrainData.Indices.length | 0);
+    arg_CB8_2.drawElements(arg_CB8_3, arg_CB8_4, camera.GL.UNSIGNED_SHORT, 0);
   };
 
   function Terrain_RangedRandom (v1, v2) {
@@ -2381,6 +2357,16 @@ JSIL.DeclareNamespace("RiftGL.View");
           $.Single, $asm02.TypeRef("RiftGL.Objects.Camera")
         ]), 
       Terrain_BuildTerrain
+    );
+
+    $.Method({Static:false, Public:true }, "CreateIndices", 
+      JSIL.MethodSignature.Void, 
+      Terrain_CreateIndices
+    );
+
+    $.Method({Static:false, Public:true }, "CreateVertesArray", 
+      JSIL.MethodSignature.Void, 
+      Terrain_CreateVertesArray
     );
 
     $.Method({Static:true , Public:true }, "DegreesToRadians", 
@@ -2463,11 +2449,6 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Method({Static:false, Public:false}, "InitTexture", 
       JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Camera")), 
       Terrain_InitTexture
-    );
-
-    $.Method({Static:false, Public:false}, "InvalidOnDraw", 
-      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Camera")), 
-      Terrain_InvalidOnDraw
     );
 
     $.Method({Static:false, Public:false}, "MakeTerrainPlasma", 
@@ -3035,10 +3016,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.Terrain)) ();
   };
   var $T02 = function () {
-    return ($T02 = JSIL.Memoize($asm02.RiftGL.Objects.Crate)) ();
+    return ($T02 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T03 = function () {
-    return ($T03 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+    return ($T03 = JSIL.Memoize($asm02.RiftGL.Objects.Crate)) ();
   };
   var $T04 = function () {
     return ($T04 = JSIL.Memoize($asm02.RiftGL.Objects.Player)) ();
@@ -3073,8 +3054,10 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function World__ctor (camera) {
     this.World$Camera$value = camera;
-    this.World$Terrain$value = new ($T01())();
-    this.World$Crate$value = (new ($T02())()).__Initialize__({
+    this.World$Terrain$value = (new ($T01())()).__Initialize__({
+        Position: $S00().Construct(0, 0, -10)}
+    );
+    this.World$Crate$value = (new ($T03())()).__Initialize__({
         Position: $S00().Construct(0, 0, -20)}
     );
     (this.World$Crate$value).InitTexture(camera);
@@ -3093,6 +3076,10 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function World_Animate (deltaTime) {
     var $temp00;
+    var terrainHeight = +(this.World$Terrain$value).GetHeight(this.World$Camera$value.position.X, this.World$Camera$value.position.Z);
+    if (+this.World$Camera$value.position.Y < (terrainHeight - +this.World$Player$value.GlObject$Size$value)) {
+      this.World$Camera$value.position.Y = terrainHeight - +this.World$Player$value.GlObject$Size$value;
+    }
     (this.World$Terrain$value).Animate(deltaTime);
     this.World$Gui$value.Gui$CurrentTime$value = +this.World$timeStart$value - +this.World$timeElapsed$value;
     if (!this.gameDone) {
@@ -3432,13 +3419,13 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T06 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
   var $T07 = function () {
-    return ($T07 = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
+    return ($T07 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T08 = function () {
-    return ($T08 = JSIL.Memoize($asm01.System.Exception)) ();
+    return ($T08 = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
   };
   var $T09 = function () {
-    return ($T09 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+    return ($T09 = JSIL.Memoize($asm01.System.Exception)) ();
   };
   var $T0A = function () {
     return ($T0A = JSIL.Memoize($asm01.System.Console)) ();
@@ -3447,7 +3434,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T0B = JSIL.Memoize($asm01.System.Action$b1.Of($asm01.System.Object))) ();
   };
   var $T0C = function () {
-    return ($T0C = JSIL.Memoize($asm01.System.Action)) ();
+    return ($T0C = JSIL.Memoize($asm01.System.Single)) ();
+  };
+  var $T0D = function () {
+    return ($T0D = JSIL.Memoize($asm01.System.Action)) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
@@ -3486,22 +3476,22 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function Page_HandleKeys () {
     if ($thisType.HeldKeys[33]) {
-      $thisType.Camera.position.Y += 0.2;
+      $thisType.Camera.velocity.Y += 0.2;
     }
     if ($thisType.HeldKeys[34]) {
-      $thisType.Camera.position.Y += -0.2;
+      $thisType.Camera.velocity.Y += -0.2;
     }
     if ($thisType.HeldKeys[37]) {
-      $thisType.Camera.position.X += 0.2;
+      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(1, 0, 0));
     }
     if ($thisType.HeldKeys[39]) {
-      $thisType.Camera.position.X += -0.2;
+      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(-1, 0, 0));
     }
     if ($thisType.HeldKeys[38]) {
-      $thisType.Camera.position.Z += 0.2;
+      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(0, 0, 2));
     }
     if ($thisType.HeldKeys[40]) {
-      $thisType.Camera.position.Z += -0.2;
+      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(0, 0, -2));
     }
   };
 
@@ -3509,19 +3499,19 @@ JSIL.DeclareNamespace("RiftGL.View");
     var arg_12B_3 = $thisType.Camera.GL.ARRAY_BUFFER;
     $thisType.Camera.GL.bindBuffer(arg_12B_3, $T06().Buffers.VertexPositions = $thisType.Camera.GL.createBuffer());
     var arg_25C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_25C_3, $T07().Positions, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_25C_3, $T08().Positions, $thisType.Camera.GL.STATIC_DRAW);
     var arg_38C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
     $thisType.Camera.GL.bindBuffer(arg_38C_3, $T06().Buffers.VertexNormals = $thisType.Camera.GL.createBuffer());
     var arg_4BD_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_4BD_3, $T07().Normals, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_4BD_3, $T08().Normals, $thisType.Camera.GL.STATIC_DRAW);
     var arg_5ED_3 = $thisType.Camera.GL.ARRAY_BUFFER;
     $thisType.Camera.GL.bindBuffer(arg_5ED_3, $T06().Buffers.TextureCoords = $thisType.Camera.GL.createBuffer());
     var arg_71E_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_71E_3, $T07().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_71E_3, $T08().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
     var arg_84E_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
     $thisType.Camera.GL.bindBuffer(arg_84E_3, $T06().Buffers.Indices = $thisType.Camera.GL.createBuffer());
     var arg_97F_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_97F_3, $T07().Indices, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_97F_3, $T08().Indices, $thisType.Camera.GL.STATIC_DRAW);
   };
 
   function Page_InitGL ($exception) {
@@ -3567,6 +3557,7 @@ JSIL.DeclareNamespace("RiftGL.View");
       $thisType.InitTexture();
       $thisType.Document.onkeydown = $T0B().New($thisType, $thisType.OnKeyDown);
       $thisType.Document.onkeyup = $T0B().New($thisType, $thisType.OnKeyUp);
+      $thisType.Document.onmousemove = $T0B().New($thisType, $thisType.OnMouseMove);
       $thisType.Tick();
     }
   };
@@ -3579,13 +3570,34 @@ JSIL.DeclareNamespace("RiftGL.View");
     $thisType.HeldKeys[$T01().$Cast(e.keyCode)] = 0;
   };
 
+  function Page_OnMouseMove (e) {
+    var centerX = ($T06().Canvas.width / 2);
+    var centerY = ($T06().Canvas.height / 2);
+    var mX = $T0C().$Cast(e.x);
+    var mY = $T0C().$Cast(e.y);
+    if (mX < (centerX / 2)) {
+      $thisType.Camera.yaw -= 0.25 * +($thisType.mouseSensitivity);
+    }
+    if (mX > (centerX / 2)) {
+      $thisType.Camera.yaw += 0.25 * +($thisType.mouseSensitivity);
+    }
+    if (mY < (centerY / 2)) {
+      $thisType.Camera.pitch += 0.25 * +($thisType.mouseSensitivity);
+    }
+    if (mY > (centerY / 2)) {
+      $thisType.Camera.pitch -= 0.25 * +($thisType.mouseSensitivity);
+    }
+    $thisType.oldX = mX;
+    $thisType.oldY = mY;
+  };
+
   function Page_OnPrepare () {
     $thisType.Camera.GL.clearColor(0, 0, 0, 1);
     $thisType.Camera.GL.enable($thisType.Camera.GL.DEPTH_TEST);
   };
 
   function Page_Tick ($exception) {
-    JSIL.GlobalNamespace.requestAnimFrame($T0C().New($thisType, $thisType.Tick));
+    JSIL.GlobalNamespace.requestAnimFrame($T0D().New($thisType, $thisType.Tick));
     $thisType.HandleKeys();
     $thisType.OnPrepare();
     $thisType.World.Prepare();
@@ -3660,6 +3672,14 @@ JSIL.DeclareNamespace("RiftGL.View");
           _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
         });
 
+    $.Method({Static:true , Public:true }, "OnMouseMove", 
+      JSIL.MethodSignature.Action($.Object), 
+      Page_OnMouseMove
+    )
+      .Parameter(0, "e", function (_) {
+          _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
+        });
+
     $.Method({Static:true , Public:false}, "OnPrepare", 
       JSIL.MethodSignature.Void, 
       Page_OnPrepare
@@ -3680,9 +3700,17 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Field({Static:true , Public:true }, "LastTime", $.Int32, 0); 
     $.Field({Static:true , Public:true }, "Camera", $asm02.TypeRef("RiftGL.Objects.Camera")); 
     $.Field({Static:true , Public:true }, "World", $asm02.TypeRef("RiftGL.Objects.World")); 
+    $.Field({Static:true , Public:false}, "oldX", $.Single); 
+    $.Field({Static:true , Public:false}, "oldY", $.Single); 
+    $.Field({Static:true , Public:false}, "yaw", $.Single, 0); 
+    $.Field({Static:true , Public:false}, "pitch", $.Single, 0); 
+    $.Field({Static:true , Public:false}, "mouseSensitivity", $.Int32, 10); 
     function Page__cctor () {
       $thisType.HeldKeys = JSIL.Array.New($T00(), 255);
       $thisType.LastTime = 0;
+      $thisType.yaw = 0;
+      $thisType.pitch = 0;
+      $thisType.mouseSensitivity = 10;
     };
 
 

@@ -8,7 +8,7 @@
         {
             var width = 32;
             this.Camera = camera;
-            this.Terrain = new Terrain();
+            this.Terrain = new Terrain { Position = new Vector(0, 0, -10) };
             this.Crate = new Crate { Position = new Vector(0, 0, -20)};
             this.Crate.InitTexture(camera);
             this.Crate.InitShaders(camera);
@@ -52,7 +52,11 @@
 
         public void Animate(float deltaTime)
         {
-            //Camera.position.Y = Terrain.GetHeight(Camera.position.X, Camera.position.Y) + Player.Size;
+            var terrainHeight = Terrain.GetHeight(Camera.position.X, Camera.position.Z);
+            if (Camera.position.Y < terrainHeight - Player.Size)
+            {
+                Camera.position.Y = terrainHeight - Player.Size;
+            }
 
             //if (Camera.position.X <= Terrain.GetScanDepth())
             //{
@@ -90,8 +94,8 @@
             ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
             ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { camera.position.X, camera.position.Y, camera.position.Z });
 
-            //Crate.Draw(camera);
             Terrain.Draw(camera);
+            //Crate.Draw(camera);
             //Gui.Draw();
         }
 

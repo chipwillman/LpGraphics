@@ -1,3 +1,6 @@
 ..\lib\bin\JSILc "GL.sln"
-xcopy /y *.js ..\Rifts\Scripts\
+
+REM xcopy /y *.js ..\Rifts\Scripts\
+
+xcopy /y Rift*.js ..\Rifts\Scripts\
 xcopy /y Files\* ..\Rifts\Files\

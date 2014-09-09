@@ -38,6 +38,7 @@ namespace RiftGL
 
                 Document.onkeydown = (Action<dynamic>)OnKeyDown;
                 Document.onkeyup = (Action<dynamic>)OnKeyUp;
+                Document.onmousemove = (Action<dynamic>)OnMouseMove;
 
                 Tick();
             }
@@ -131,32 +132,37 @@ namespace RiftGL
             if (HeldKeys[33])
             {
                 // Page Up
-                Camera.position.Y += 0.2f;
+                Camera.velocity.Y += 0.2f;
             }
+
             if (HeldKeys[34])
             {
                 // Page Down
-                Camera.position.Y += -0.2f;
+                Camera.velocity.Y += -0.2f;
             }
+
             if (HeldKeys[37])
             {
                 // Left cursor key
-                Camera.position.X += 0.2f;
+                Camera.velocity += new Vector(1.0f, 0, 0);
             }
+
             if (HeldKeys[39])
             {
                 // Right cursor key
-                Camera.position.X += -0.2f;
+                Camera.velocity += new Vector(-1.0f, 0, 0);
             }
+
             if (HeldKeys[38])
             {
                 // Up cursor key
-                Camera.position.Z += 0.2f;
+                Camera.velocity += new Vector(0, 0, 2f);
             }
+
             if (HeldKeys[40])
             {
                 // Down cursor key
-                Camera.position.Z += -0.2f;
+                Camera.velocity += new Vector(0, 0, -2f);
             }
         }
 
@@ -200,6 +206,37 @@ namespace RiftGL
         public static void OnKeyUp(dynamic e)
         {
             HeldKeys[e.keyCode] = false;
+        }
+
+        static float oldX;
+        static float oldY;
+        static float yaw = 0.0f;
+        static float pitch = 0.0f;
+
+        private static int mouseSensitivity = 10;
+
+        public static void OnMouseMove(dynamic e)
+        {
+            var centerX = Camera.Canvas.width / 2;
+            var centerY = Camera.Canvas.height /2;
+               
+	        float mX, mY;
+
+	        mX = (float)e.x;
+	        mY = (float)e.y;
+
+	        if (mX < centerX/2)
+		        Camera.yaw -= 0.25f*mouseSensitivity;
+	        if (mX > centerX/2)
+		        Camera.yaw += 0.25f*mouseSensitivity;
+
+	        if (mY < centerY/2)
+		        Camera.pitch += 0.25f*mouseSensitivity;
+	        if (mY > centerY/2)
+		        Camera.pitch -= 0.25f*mouseSensitivity;
+
+	        oldX = mX;
+	        oldY = mY;            
         }
 
         private static void OnPrepare()

@@ -172,20 +172,20 @@
 
             velocity += acceleration*deltaTime;
 
-            //position.X += (float)(Math.Cos(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
-            //position.Z += (float)(Math.Sin(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
-            //position.X += cosYaw * speed;
-            //position.Z += sinYaw * speed;
+            position.X += (float)(Math.Cos(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
+            position.Z += (float)(Math.Sin(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
+            position.X += cosYaw * speed;
+            position.Z += sinYaw * speed;
 
             // added *cosPitch
             lookAt.X = position.X + (cosYaw*cosPitch);
             lookAt.Y = position.Y + sinPitch;
             lookAt.Z = position.Z + (sinYaw*cosPitch);
             
-            var cameraMatrix = MakeLookAt(position, lookAt, up);
+            var cameraMatrix = GLMatrix4.lookAt(position, lookAt, up);
 
             // Make a view matrix from the camera matrix.
-            Matrices.ModelView = MakeInverse(cameraMatrix);
+            //Matrices.ModelView = GLMatrix4.inverse(cameraMatrix);
         }
 
         #region Implementation

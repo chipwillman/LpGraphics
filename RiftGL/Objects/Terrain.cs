@@ -21,7 +21,7 @@
         
         public float[] Normals;
 
-        public int[] Indices;
+        public ushort[] Indices;
     }
 
     public class Terrain : GlObject
@@ -45,8 +45,8 @@
 		    float projCameraX, projCameraZ;
 
 		    // divide by the grid-spacing if it is not 1
-		    projCameraX = (float)x / terrainMul;
-		    projCameraZ = (float)z / terrainMul;
+		    projCameraX = (float)x;
+		    projCameraZ = (float)z;
 
 		    // compute the height field coordinates (Col0, Row0)
 		    // and (Col1, Row1) that identify the height field cell 
@@ -95,9 +95,9 @@
             Width = w;
 
             scanDepth = 80.0f;
-            terrainMul = 50.0f;
+            terrainMul = 2.0f;
             textureMul = 0.25f;
-            heightMul = 175.0f;
+            heightMul = 5.0f;
 
             fogColor = new float[4];
             fogColor[0] = 0.75f;
@@ -107,26 +107,20 @@
 
             HeightMap = null;
 
-            // CObject attributes
-            Position = new Vector(0, 0, 0);
-            Velocity = new Vector(0, 0, 0);
-            Acceleration = new Vector(0, 0, 0);
-
             Size = (float)Math.Sqrt(Width * terrainMul * Width * terrainMul + Width * terrainMul * Width * terrainMul);
 
-            //positions = new float[4 * 3 * Width * Width];
-            //texCoord = new float[4 * 2 * Width * Width];
             HeightMap = new HeightMap
                             {
                                 Values = new float[Width * Width]
                             };
 
-            this.InitShaders(camera);
-            this.InitTexture(camera);
-
             MakeTerrainPlasma(HeightMap, Width, rFactor);
-
-            this.InitBuffers(camera);
+            if (camera != null)
+            {
+                this.InitShaders(camera);
+                this.InitTexture(camera);
+                this.InitBuffers(camera);
+            }
 
         }
 
@@ -171,79 +165,131 @@
 
         private void InitBuffers(Camera camera)
         {
+            this.CreateVertesArray();
+
+            var gl = camera.GL;
+
+            this.Buffers.VertexPositions = gl.createBuffer();
+            this.Buffers.VertexNormals = camera.GL.createBuffer();
+            this.Buffers.TextureCoords = camera.GL.createBuffer();
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
+            gl.bufferData(gl.ARRAY_BUFFER, this.TerrainData.Vertices, gl.STATIC_DRAW);
+
+            gl.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+            gl.bufferData(camera.GL.ARRAY_BUFFER, TerrainData.Normals, camera.GL.STATIC_DRAW);
+
+            gl.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+            gl.bufferData(camera.GL.ARRAY_BUFFER, TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
+
+
+            this.CreateIndices();
+
+            this.Buffers.Indices = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.TerrainData.Indices, gl.STATIC_DRAW);
+        }
+
+        public void CreateIndices()
+        {
+            var indices = new List<ushort>();
+
+            var lineTriangles = new List<ushort>();
+            //{ 4, 0, 5,  0, 5, 1,  5, 1, 6, 1, 6, 2, 2, 6, 3, 3, 7, 6 };
+
+            for (int i = 0; i < Width - 1; i++)
+            {
+                lineTriangles.AddRange(new[] { (ushort)(Width + i), (ushort)i, (ushort)(Width + i + 1) });
+                lineTriangles.AddRange(new[] { (ushort)i, (ushort)(Width + i + 1), (ushort)(i + 1) });
+            }
+
+            for (int i = 0; i < this.Width - 1; i++)
+            {
+                foreach (var index in lineTriangles)
+                {
+                    indices.Add((ushort)(index + i * this.Width));
+                }
+            }
+
+            this.TerrainData.Indices = indices.ToArray();
+        }
+
+        public void CreateVertesArray()
+        {
             var vertexBuffer = new List<Vector>();
             var textureBuffer = new List<Vector>();
-            float textureU = Width * 0.1f;
-            float textureV = Width * 0.1f;
+            float textureU = this.Width *0.1f;
+            float textureV = this.Width *0.1f;
 
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < this.Width; i++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int j = 0; j < this.Width; j++)
                 {
-                    float scaleC = j / ((float)Width - 1);
-                    float scaleR = i / ((float)Width - 1);
-                    float x = -0.5f + scaleC;
-                    float y = HeightMap.Values[i * Width + j];
-                    float z = -0.5f + scaleR;
+                    float scaleR = (j / ((float)this.Width - 1));
+                    float scaleC = (i / ((float)this.Width - 1));
+                    float x = -32f + scaleR * 64;
+                    float y = this.HeightMap.Values[i * this.Width + j] * heightMul;
+                    float z = -32f + scaleC * 64;
                     vertexBuffer.Add(new Vector(x, y, z));
-                    float u = textureU * scaleC;
-                    float v = textureV * scaleR;
+                    float u = textureU * scaleR;
+                    float v = textureV * scaleC;
                     textureBuffer.Add(new Vector(u, v, 0));
                 }
             }
 
             var normals = new List<Vector>();
 
-            for (int i = 0; i < Width - 1; i++)
+            for (int i = 0; i < this.Width - 1; i++)
             {
-                for (int j = 0; j < Width - 1; j++)
+                for (int j = 0; j < this.Width - 1; j++)
                 {
-                    Vector t00 = vertexBuffer[i * Width + j];
-                    Vector t01 = vertexBuffer[(i + 1) * Width + j];
-                    Vector t02 = vertexBuffer[(i + 1) * Width + (j + 1)];
+                    Vector t00 = vertexBuffer[i * this.Width + j];
+                    Vector t01 = vertexBuffer[(i + 1) * this.Width + j];
+                    Vector t02 = vertexBuffer[(i + 1) * this.Width + (j + 1)];
 
-                    Vector t10 = vertexBuffer[(i + 1) * Width + (j + 1)];
-                    Vector t11 = vertexBuffer[i * Width + (j + 1)];
-                    Vector t12 = vertexBuffer[i * Width + j];
+                    Vector t10 = vertexBuffer[(i + 1) * this.Width + (j + 1)];
+                    Vector t11 = vertexBuffer[i * this.Width + (j + 1)];
+                    Vector t12 = vertexBuffer[i * this.Width + j];
 
                     Vector norm0 = (t00 - t01) ^ (t01 - t02);
                     Vector norm1 = (t10 - t11) ^ (t11 - t12);
-                    normals.AddRange(new [] { norm0, norm1 });
+                    //norm1.Y = -1;
+                    normals.AddRange(new[] { norm0, norm1 });
                 }
             }
 
             var finalNormals = new List<Vector>();
 
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < this.Width; i++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int j = 0; j < this.Width; j++)
                 {
                     Vector finalNormal = new Vector();
 
                     if (j != 0 && i != 0)
                     {
-                        var vector1 = normals[((i - 1)) + ((j - 1) * Width)];
-                        var vector2 = normals[((i - 1)) + ((j - 1) * Width) + 1];
+                        var vector1 = normals[((i - 1)) + ((j - 1) * this.Width)];
+                        var vector2 = normals[((i - 1)) + ((j - 1) * this.Width) + 1];
 
                         finalNormal += vector1 + vector2;
                     }
-                    
-                    if (i != 0 && j != Width - 1)
+
+                    if (i != 0 && j != this.Width - 1)
                     {
-                        var vector = normals[((i - 1) * 3) + ((j) * Width)];
+                        var vector = normals[((i - 1) * 3) + ((j) * this.Width)];
                         finalNormal += vector;
                     }
-                    
-                    if (i != Width -1 && j != Width -1)
+
+                    if (i != this.Width - 1 && j != this.Width - 1)
                     {
-                        var vector1 = normals[((i) * 3) + ((j) * Width)];
-                        var vector2 = normals[((i) * 3) + ((j) * Width) + 1];
+                        var vector1 = normals[((i) * 3) + ((j) * this.Width)];
+                        var vector2 = normals[((i) * 3) + ((j) * this.Width) + 1];
                         finalNormal += vector1 + vector2;
                     }
 
-                    if (i != Width - 1 && j != 0)
+                    if (i != this.Width - 1 && j != 0)
                     {
-                        var vector = normals[((i) * 3) + ((j - 1) * Width)];
+                        var vector = normals[((i) * 3) + ((j - 1) * this.Width)];
                         finalNormal += vector;
                     }
 
@@ -256,73 +302,23 @@
             var normalsDataBuffer = new List<float>();
             var textureDataBuffer = new List<float>();
 
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < this.Width; i++)
             {
-                for (int j = 0; j < Width; j++)
+                for (int j = 0; j < this.Width; j++)
                 {
-                    var vertex = vertexBuffer[j + i * Width];
-                    var texture = textureBuffer[j + i * Width];
-                    var normal = finalNormals[j + i * Width];
+                    var vertex = vertexBuffer[j + i * this.Width];
+                    var texture = textureBuffer[j + i * this.Width];
+                    var normal = finalNormals[j + i * this.Width];
                     textureDataBuffer.AddRange(new[] { texture.X, texture.Y });
                     normalsDataBuffer.AddRange(new[] { normal.X, normal.Y, normal.Z });
-                    vertexDataBuffer.AddRange(new[] { vertex.X, vertex.Y, vertex.Z }); // , normal.X, normal.Y, normal.Z, texture.X, texture.Y
+                    vertexDataBuffer.AddRange(new[] { vertex.X, vertex.Y, vertex.Z });
+                        // , normal.X, normal.Y, normal.Z, texture.X, texture.Y
                 }
             }
 
-            var gl = camera.GL;
-
-            this.Buffers.VertexPositions = gl.createBuffer();
-            
             this.TerrainData.Vertices = vertexDataBuffer.ToArray();
             this.TerrainData.Normals = normalsDataBuffer.ToArray();
             this.TerrainData.TextureCoords = textureDataBuffer.ToArray();
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
-            gl.bufferData(gl.ARRAY_BUFFER, this.TerrainData.Vertices, gl.STATIC_DRAW);
-
-            ViewPort.Buffers.VertexNormals = camera.GL.createBuffer();
-            gl.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
-            gl.bufferData(camera.GL.ARRAY_BUFFER, TerrainData.Normals, camera.GL.STATIC_DRAW);
-
-            ViewPort.Buffers.TextureCoords = camera.GL.createBuffer();
-            gl.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
-            gl.bufferData(camera.GL.ARRAY_BUFFER, TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
-
-
-            var indices = new List<int>();
-            //var restartPrimitives = Width * Width;
-
-            for (int i = 0; i < Width - 1; i++)
-            {
-                for (int j = 0; j < Width; j++)
-                {
-                    for (int k = 0; k < 2; k++)
-                    {
-                        int row = i + (1 - k);
-                        int index = row * Width + j;
-                        if (index > this.TerrainData.Vertices.Length /3)
-                        {
-                            Console.WriteLine("Outside???");                            
-                        }
-                        else
-                        {
-                            indices.Add(index);
-                        }
-                    }
-                }
-                //indices.Add(restartPrimitives);
-            }
-
-            this.Buffers.Indices = gl.createBuffer();
-            this.TerrainData.Indices = indices.ToArray();
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, TerrainData.Indices, gl.STATIC_DRAW);
-
-            //camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.TextureCoords = camera.GL.createBuffer());
-            //camera.GL.bufferData(camera.GL.ARRAY_BUFFER, CubeData.TexCoords, camera.GL.STATIC_DRAW);
-
-            //camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, ViewPort.Buffers.Indices = camera.GL.createBuffer());
-            //camera.GL.bufferData(camera.GL.ELEMENT_ARRAY_BUFFER, CubeData.Indices, camera.GL.STATIC_DRAW);
         }
 
         public static dynamic TerrainShaderProgram;
@@ -373,27 +369,25 @@
 
         protected override void OnDraw(Camera camera)
         {
-            // ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
-            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
+            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
+            //ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
 
             //ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X), new[] { 1f, 0, 0 });
             //ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y), new[] { 0, 1f, 0 });
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, Buffers.VertexPositions);
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
             //camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
-            camera.GL.vertexAttribPointer(TerrainData.Vertices, 3, camera.GL.FLOAT, false, 0, 0);
+            camera.GL.vertexAttribPointer(TerrainShaderProgram.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, Buffers.VertexNormals);
-            camera.GL.vertexAttribPointer(TerrainData.Normals, 3, camera.GL.FLOAT, false, 0, 0);
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+            camera.GL.vertexAttribPointer(TerrainShaderProgram.VertexNormal, 3, camera.GL.FLOAT, false, 0, 0);
 
-            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, Buffers.TextureCoords);
-            camera.GL.vertexAttribPointer(TerrainData.TextureCoords, 2, camera.GL.FLOAT, false, 0, 0);
+            camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+            camera.GL.vertexAttribPointer(TerrainShaderProgram.TextureCoord, 2, camera.GL.FLOAT, false, 0, 0);
 
             camera.GL.activeTexture(camera.GL.TEXTURE0);
             camera.GL.bindTexture(camera.GL.TEXTURE_2D, TerrainTexture);
             camera.GL.uniform1i(ViewPort.Uniforms.Sampler, 0);
-
-            camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, ViewPort.Buffers.Indices);
 
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ProjectionMatrix, false, ViewPort.Matrices.Projection);
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ModelViewMatrix, false, ViewPort.Matrices.ModelView);
@@ -402,76 +396,9 @@
             ViewPort.GLMatrix3.transpose(ViewPort.Matrices.Normal);
             camera.GL.uniformMatrix3fv(ViewPort.Uniforms.NormalMatrix, false, ViewPort.Matrices.Normal);
 
-            camera.GL.drawElements(camera.GL.TRIANGLES, CubeData.Indices.Length, camera.GL.UNSIGNED_SHORT, 0);
-        }
-
-        protected void InvalidOnDraw(Camera camera)
-        {
-            var step = sizeof(float);
-            var total = 3; //+3 + 2;
-            var stride = step * total;
-            var gl = camera.GL;
-
-            // camera.GL.useProgram(TerrainShaderProgram);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
-            gl.vertexAttribPointer(TerrainShaderProgram.VertexPosition, 3, gl.FLOAT, false, stride, 0);
-
-            //gl.vertexAttribPointer(TerrainShaderProgram.VertexNormal, 3, gl.FLOAT, false, stride, step * 3);
-            //gl.vertexAttribPointer(TerrainShaderProgram.TextureCoord, 2, gl.FLOAT, false, stride, step * 6);
-
-            // gl.enable(gl.PRIMITIVE_RESTART);
-            // gl.primitiveRestartIndex(Width * Width);
-
-            gl.bufferData(gl.ARRAY_BUFFER, this.TerrainData.Vertices, gl.STATIC_DRAW);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.Indices);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, TerrainData.Indices, gl.STATIC_DRAW);
-
-            //bool lighting = Document.getElementById("lighting").@checked;
-            //GL.uniform1i(Uniforms.UseLighting, lighting ? 1 : 0);
-
-            //if (lighting)
-            //{
-            //    GL.uniform3f(
-            //        Uniforms.AmbientColor,
-            //        float.Parse(Document.getElementById("ambientR").value),
-            //        float.Parse(Document.getElementById("ambientG").value),
-            //        float.Parse(Document.getElementById("ambientB").value)
-            //    );
-
-            //    var lightingDirection = new[] {
-            //        float.Parse(Document.getElementById("lightDirectionX").value),
-            //        float.Parse(Document.getElementById("lightDirectionY").value),
-            //        float.Parse(Document.getElementById("lightDirectionZ").value)
-            //    };
-            //    GLVector3.normalize(lightingDirection, lightingDirection);
-            //    GLVector3.scale(lightingDirection, -1);
-
-            //    GL.uniform3fv(Uniforms.LightingDirection, lightingDirection);
-
-            //    GL.uniform3f(
-            //        Uniforms.DirectionalColor,
-            //        float.Parse(Document.getElementById("directionalR").value),
-            //        float.Parse(Document.getElementById("directionalG").value),
-            //        float.Parse(Document.getElementById("directionalB").value)
-            //    );
-            //}
-
-            //camera.DrawLighting();
-
-            //GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, Buffers.CubeIndices);
-
-            ViewPort.GLMatrix4.toInverseMat3(ViewPort.Matrices.ModelView, ViewPort.Matrices.Normal);
-            ViewPort.GLMatrix3.transpose(ViewPort.Matrices.Normal);
-            
-            gl.uniformMatrix4fv(ViewPort.Uniforms.ProjectionMatrix, false, ViewPort.Matrices.Projection);
-            gl.uniformMatrix4fv(ViewPort.Uniforms.ModelViewMatrix, false, ViewPort.Matrices.ModelView);
-
-            //gl.uniformMatrix3fv(ViewPort.Uniforms.NormalMatrix, false, ViewPort.Matrices.Normal);
-
-            gl.drawElements(gl.TRIANGLE_STRIPS, Width * (Width - 1) * 2 + (Width - 1), gl.UNSIGNED_INT, 0);
-
+            camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+            camera.GL.drawElements(camera.GL.TRIANGLES, this.TerrainData.Indices.Length, camera.GL.UNSIGNED_SHORT, 0);
+            //camera.GL.drawArrays(camera.GL.TRIANGLE_STRIP, 0, this.TerrainData.Indices.Length);
         }
 
         private float RangedRandom(float v1, float v2)
