@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Home Page - My ASP.NET MVC Application</title>
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        <link href="Content/site.css" rel="stylesheet"/>
+
+        <script src="Scripts/modernizr-2.5.3.js"></script>
+
+    </head>
+    <body onload="onLoad()">
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p class="site-title"><a href="/">your logo here</a></p>
+                </div>
+                <div class="float-right">
+                    <section id="login">
+
+                    </section>
+                    <nav>
+                        <ul id="menu">
+                            <li><a href="/">Home</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+            
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>Home Page.</h1>
+                <h2>Modify this template to jump-start your ASP.NET MVC application.</h2>
+            </hgroup>
+            <style>
+              body {
+                font-family: Calibri, Tahoma, Verdana, Arial, sans serif;
+                font-size: 13pt;
+              }
+              input {
+                font-family: Consolas, Courier New, monospace;
+                font-size: 11pt;
+              }
+            </style>
+    
+            <a href="http://jsil.org/"><img src="http://jsil.org/images/jsil_48px.png" alt="JSIL" align="left" border="0"></a>
+            <a href="http://learningwebgl.com/blog/?p=684">Based on Lesson 7 from Learning WebGL</a><br>
+            <a href="Page.cs">View C# Source Code</a> | <a href="WebGL, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null.js">View Compiled JavaScript</a>
+            <hr>
+
+            <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+
+            <br>
+            <input type="checkbox" id="lighting" checked> Use lighting<br>
+            (Use cursor keys to spin the box and <code>Page Up</code>/<code>Page Down</code> to zoom out/in)
+
+            <br>
+            <h2>Directional light:</h2>
+
+            <table style="border: 0; padding: 10px;">
+                <tr>
+                    <td><b>Direction&nbsp;</b>
+                    <td>X: <input type="text" id="lightDirectionX" value="-0.25">
+                    <td>Y: <input type="text" id="lightDirectionY" value="-0.25">
+                    <td>Z: <input type="text" id="lightDirectionZ" value="-1.0">
+                </tr>
+                <tr>
+                    <td><b>Color&nbsp;</b>
+                    <td>R: <input type="text" id="directionalR" value="0.8">
+                    <td>G: <input type="text" id="directionalG" value="0.8">
+                    <td>B: <input type="text" id="directionalB" value="0.8">
+                </tr>
+            </table>
+
+            <h2>Ambient light:</h2>
+            <table style="border: 0; padding: 10px;">
+                <tr>
+                    <td><b>Color&nbsp;</b>
+                    <td>R: <input type="text" id="ambientR" value="0.2">
+                    <td>G: <input type="text" id="ambientG" value="0.2">
+                    <td>B: <input type="text" id="ambientB" value="0.2">
+                </tr>
+            </table>
+        </div>
+    </section>
+
+            <section class="content-wrapper main-content clear-fix">
+                
+<h3>We suggest the following:</h3>
+<ol class="round">
+    <li class="one">
+        <h5>Getting Started</h5>
+        ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+        enables a clean separation of concerns and that gives you full control over markup
+        for enjoyable, agile development. ASP.NET MVC includes many features that enable
+        fast, TDD-friendly development for creating sophisticated applications that use
+        the latest web standards.
+        <a href="http://go.microsoft.com/fwlink/?LinkId=245151">Learn more…</a>
+    </li>
+
+    <li class="two">
+        <h5>Add NuGet packages and jump-start your coding</h5>
+        NuGet makes it easy to install and update free libraries and tools.
+        <a href="http://go.microsoft.com/fwlink/?LinkId=245153">Learn more…</a>
+    </li>
+
+    <li class="three">
+        <h5>Find Web Hosting</h5>
+        You can easily find a web hosting company that offers the right mix of features
+        and price for your applications.
+        <a href="http://go.microsoft.com/fwlink/?LinkId=245157">Learn more…</a>
+    </li>
+</ol>
+
+
+
+
+            </section>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; 2014 - My ASP.NET MVC Application</p>
+                </div>
+            </div>
+        </footer>
+
+    <script src="Scripts/Files/glMatrix-0.9.5.min.js"></script>
+    <script src="Scripts/Files/webgl-utils.js"></script>
+    <script src="Scripts/startnetapp.js"></script>
+    <script src="Scripts/Libraries/JSIL.js"></script>
+        <script src="Scripts/jquery-1.7.1.js"></script>
+
+        
+    </body>
+</html>
