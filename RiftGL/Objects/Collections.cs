@@ -19,7 +19,7 @@
 
     public class MatrixCollection
     {
-        public float[] Projection, ModelView, Normal;
+        public float[] Projection, ModelView, Normal, Billboard;
     }
 
     public static class CubeData

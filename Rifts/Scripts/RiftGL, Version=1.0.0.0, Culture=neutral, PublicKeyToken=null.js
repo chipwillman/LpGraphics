@@ -200,209 +200,397 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T02 = function () {
-    return ($T02 = JSIL.Memoize($asm01.System.Single)) ();
+    return ($T02 = JSIL.Memoize($asm01.System.EventHandler)) ();
   };
   var $T03 = function () {
-    return ($T03 = JSIL.Memoize($asm01.System.Math)) ();
+    return ($T03 = JSIL.Memoize($asm01.System.Delegate)) ();
   };
   var $T04 = function () {
-    return ($T04 = JSIL.Memoize($asm01.System.Double)) ();
+    return ($T04 = JSIL.Memoize($asm01.System.Threading.Interlocked)) ();
   };
   var $T05 = function () {
-    return ($T05 = JSIL.Memoize($asm01.System.Object)) ();
+    return ($T05 = JSIL.Memoize($asm01.System.Single)) ();
   };
   var $T06 = function () {
-    return ($T06 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
+    return ($T06 = JSIL.Memoize($asm01.System.Math)) ();
   };
   var $T07 = function () {
-    return ($T07 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+    return ($T07 = JSIL.Memoize($asm01.System.Double)) ();
+  };
+  var $T08 = function () {
+    return ($T08 = JSIL.Memoize($asm03.System.Collections.Generic.Stack$b1.Of($asm01.System.Object))) ();
+  };
+  var $T09 = function () {
+    return ($T09 = JSIL.Memoize($asm01.System.Object)) ();
+  };
+  var $T0A = function () {
+    return ($T0A = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+  };
+  var $T0B = function () {
+    return ($T0B = JSIL.Memoize($asm01.System.EventArgs)) ();
   };
   var $S00 = function () {
-    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
+    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), null))) ();
+  };
+  var $S01 = function () {
+    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
         $asm01.TypeRef("System.Single"), $asm01.TypeRef("System.Single"), 
         $asm01.TypeRef("System.Single")
       ]))) ();
   };
-  var $S01 = function () {
-    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), null))) ();
-  };
   var $S02 = function () {
     return ($S02 = JSIL.Memoize(new JSIL.MethodSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [$asm02.TypeRef("RiftGL.Objects.Vector"), $asm01.TypeRef("System.Single")]))) ();
+  };
+  var $S03 = function () {
+    return ($S03 = JSIL.Memoize(new JSIL.ConstructorSignature($asm03.TypeRef("System.Collections.Generic.Stack`1", [$asm01.TypeRef("System.Object")]), null))) ();
   };
 
   function Camera__ctor () {
     $T00().prototype._ctor.call(this);
-    this.position = $S00().Construct(0, 0, 0);
-    this.lookAt = $S00().Construct(0, 0, 1);
-    this.forward = $S00().Construct(0, 0, 1);
-    this.up = $S00().Construct(0, 1, 0);
-    this.right = $S00().Construct(1, 0, 0);
-    this.velocity = $S00().Construct(0, 0, 0);
-    this.acceleration = $S00().Construct(0, 0, 0);
-    this.yaw = 0;
-    this.pitch = 0;
+    this.MatrixTranslation = $T00().GLMatrix4.create();
+    this.MatrixRotation = $T00().GLMatrix4.create();
+    $T00().GLMatrix4.identity(this.MatrixTranslation);
+    $T00().GLMatrix4.identity(this.MatrixRotation);
+    this.set_Location($S00().Construct());
+    this.set_Rotation($S00().Construct());
+    this.set_Velocity($S00().Construct());
+    this.fAcceleration = $S00().Construct();
+    this.set_LookAt($S01().Construct(0, 0, 1));
+    this.fLookAtAcceleration = $S00().Construct();
+    this.fLookAtVelocity = $S00().Construct();
+    this.fUp = $S01().Construct(0, 1, 0);
   };
 
-  function Camera_Animate (deltaTime) {
-    if (!((+this.yaw < 360) && (+this.yaw > -360))) {
-      this.yaw = 0;
-    }
-    if (+this.pitch > 60) {
-      this.pitch = 60;
-    }
-    if (+this.pitch < -60) {
-      this.pitch = -60;
-    }
-    var cosYaw = Math.fround(Math.cos(this.Deg2Rad(this.yaw)));
-    var sinYaw = Math.fround(Math.sin(this.Deg2Rad(this.yaw)));
-    var sinPitch = Math.fround(Math.sin(this.Deg2Rad(this.pitch)));
-    var cosPitch = Math.fround(Math.cos(this.Deg2Rad(this.pitch)));
-    var speed = +this.velocity.Z * +deltaTime;
-    var strafeSpeed = +this.velocity.X * +deltaTime;
-    if (speed > 15) {
-      speed = 15;
-    }
-    if (strafeSpeed > 15) {
-      strafeSpeed = 15;
-    }
-    if (speed < -15) {
-      speed = -15;
-    }
-    if (strafeSpeed < -15) {
-      strafeSpeed = -15;
-    }
-    if (+(this.velocity).Length() > 0) {
-      this.acceleration = $T01().op_Subtraction($S01().Construct(), $S02().CallStatic($T01(), "op_Multiply", null, this.velocity, 1.5));
-    }
-    this.velocity = $T01().op_Addition(this.velocity, $S02().CallStatic($T01(), "op_Multiply", null, this.acceleration, deltaTime));
-    this.position.X += Math.fround(Math.cos(this.Deg2Rad(+this.yaw + 90))) * strafeSpeed;
-    this.position.Z += Math.fround(Math.sin(this.Deg2Rad(+this.yaw + 90))) * strafeSpeed;
-    this.position.X += cosYaw * speed;
-    this.position.Z += sinYaw * speed;
-    this.lookAt.X = +this.position.X + (cosYaw * cosPitch);
-    this.lookAt.Y = +this.position.Y + sinPitch;
-    this.lookAt.Z = +this.position.Z + (sinYaw * cosPitch);
-    var cameraMatrix = $T00().GLMatrix4.lookAt(this.position, this.lookAt, this.up);
+  function Camera_add_EyePartChanged (value) {
+    var eventHandler = this.EyePartChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Combine(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "EyePartChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
   };
 
-  function Camera_Deg2Rad (a) {
+  function Camera_add_LookAtChanged (value) {
+    var eventHandler = this.LookAtChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Combine(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "LookAtChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_add_RotationChanged (value) {
+    var eventHandler = this.RotationChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Combine(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "RotationChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_add_VelocityChanged (value) {
+    var eventHandler = this.VelocityChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Combine(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "VelocityChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_Animate (DeltaTime) {
+    var CosineYaw = Math.fround(Math.cos(-this.get_Rotation().Y));
+    var SinYaw = Math.fround(Math.sin(-this.get_Rotation().Y));
+    var SinPitch = Math.fround(Math.sin(this.get_Rotation().X));
+    var Speed = +this.get_Velocity().Z * +DeltaTime;
+    var StrafeSpeed = +this.get_Velocity().X * +DeltaTime;
+    if (Speed > 15) {
+      Speed = 15;
+    }
+    if (StrafeSpeed > 15) {
+      StrafeSpeed = 15;
+    }
+    if (Speed < -15) {
+      Speed = -15;
+    }
+    if (StrafeSpeed < -15) {
+    }
+    if (+(this.get_Velocity()).Length() > 0) {
+      this.fAcceleration = $S02().CallStatic($T01(), "op_Multiply", null, this.get_Velocity(), -1.5);
+    }
+    this.fAcceleration.Y = -9.8;
+    this.set_Velocity($T01().op_Addition(
+        this.get_Velocity(), 
+        $S02().CallStatic($T01(), "op_Multiply", null, this.fAcceleration, DeltaTime)
+      ));
+    var delta = $S00().Construct();
+    delta.Y += +this.get_Velocity().Y * +DeltaTime;
+    delta.X += SinYaw * Speed;
+    delta.Z += CosineYaw * Speed;
+    this.fLocation = $T01().op_Addition(this.fLocation, delta);
+  };
+
+  function Camera_Center () {
+    this.fRotation.Y = 0;
+  };
+
+  function Camera_DEG2RAD (a) {
     return (0.0174532924 * +a);
   };
 
-  function Camera_LookAt (obj) {
-    this.velocity = $T01().op_Subtraction(obj.GlObject$Position$value, this.lookAt);
-    this.initLookAt = this.lookAt;
-    this.finalLookAt = obj.GlObject$Position$value;
-    this.lookAtAccel = $T01().op_Subtraction($S01().Construct(), $S02().CallStatic($T01(), "op_Multiply", null, this.lookAt, 0.25));
-    this.UpdateLookAt();
+  function Camera_get_BillboardMatrix () {
+    return this.fBillboardMatrix;
   };
 
-  function Camera_LookAtNow (obj) {
-    this.lookAt = obj.GlObject$Position$value;
+  function Camera_get_EyePart () {
+    return this.get_Location();
   };
 
-  function Camera_MakeInverse (m) {
-    var m2 = +m[0];
-    var m4 = +m[2];
-    var m5 = +m[3];
-    var m6 = +m[4];
-    var m8 = +m[6];
-    var m9 = +m[7];
-    var m10 = +m[8];
-    var m12 = +m[10];
-    var m13 = +m[11];
-    var m14 = +m[12];
-    var m16 = +m[14];
-    var m17 = +m[15];
-    var tmp_0 = m12 * m17;
-    var tmp_ = m16 * m13;
-    var tmp_2 = m8 * m17;
-    var tmp_3 = m16 * m9;
-    var tmp_4 = m8 * m13;
-    var tmp_5 = m12 * m9;
-    var tmp_6 = m4 * m17;
-    var tmp_7 = m16 * m5;
-    var tmp_8 = m4 * m13;
-    var tmp_9 = m12 * m5;
-    var tmp_10 = m4 * m9;
-    var tmp_11 = m8 * m5;
-    var tmp_12 = m10 * +m[13];
-    var tmp_13 = m14 * +m[9];
-    var tmp_14 = m6 * +m[13];
-    var tmp_15 = m14 * +m[5];
-    var tmp_16 = m6 * +m[9];
-    var tmp_17 = m10 * +m[5];
-    var tmp_18 = m2 * +m[13];
-    var tmp_19 = m14 * +m[1];
-    var tmp_20 = m2 * +m[9];
-    var tmp_21 = m10 * +m[1];
-    var tmp_22 = m2 * +m[5];
-    var tmp_23 = m6 * +m[1];
-    var d = +((1 / ((((m2 * ((((tmp_0 * +m[5]) + (tmp_3 * +m[9])) + (tmp_4 * +m[13])) - (((tmp_ * +m[5]) + (tmp_2 * +m[9])) + (tmp_5 * +m[13])))) + (m6 * ((((tmp_ * +m[1]) + (tmp_6 * +m[9])) + (tmp_9 * +m[13])) - (((tmp_0 * +m[1]) + (tmp_7 * +m[9])) + (tmp_8 * +m[13]))))) + (m10 * ((((tmp_2 * +m[1]) + (tmp_7 * +m[5])) + (tmp_10 * +m[13])) - (((tmp_3 * +m[1]) + (tmp_6 * +m[5])) + (tmp_11 * +m[13]))))) + (m14 * ((((tmp_5 * +m[1]) + (tmp_8 * +m[5])) + (tmp_11 * +m[9])) - (((tmp_4 * +m[1]) + (tmp_9 * +m[5])) + (tmp_10 * +m[9])))))));
-    return JSIL.Array.New($T02(), [(d * ((((tmp_0 * +m[5]) + (tmp_3 * +m[9])) + (tmp_4 * +m[13])) - (((tmp_ * +m[5]) + (tmp_2 * +m[9])) + (tmp_5 * +m[13])))), (d * ((((tmp_ * +m[1]) + (tmp_6 * +m[9])) + (tmp_9 * +m[13])) - (((tmp_0 * +m[1]) + (tmp_7 * +m[9])) + (tmp_8 * +m[13])))), (d * ((((tmp_2 * +m[1]) + (tmp_7 * +m[5])) + (tmp_10 * +m[13])) - (((tmp_3 * +m[1]) + (tmp_6 * +m[5])) + (tmp_11 * +m[13])))), (d * ((((tmp_5 * +m[1]) + (tmp_8 * +m[5])) + (tmp_11 * +m[9])) - (((tmp_4 * +m[1]) + (tmp_9 * +m[5])) + (tmp_10 * +m[9])))), (d * ((((tmp_ * m6) + (tmp_2 * m10)) + (tmp_5 * m14)) - (((tmp_0 * m6) + (tmp_3 * m10)) + (tmp_4 * m14)))), (d * ((((tmp_0 * m2) + (tmp_7 * m10)) + (tmp_8 * m14)) - (((tmp_ * m2) + (tmp_6 * m10)) + (tmp_9 * m14)))), (d * ((((tmp_3 * m2) + (tmp_6 * m6)) + (tmp_11 * m14)) - (((tmp_2 * m2) + (tmp_7 * m6)) + (tmp_10 * m14)))), (d * ((((tmp_4 * m2) + (tmp_9 * m6)) + (tmp_10 * m10)) - (((tmp_5 * m2) + (tmp_8 * m6)) + (tmp_11 * m10)))), (d * ((((tmp_12 * m9) + (tmp_15 * m13)) + (tmp_16 * m17)) - (((tmp_13 * m9) + (tmp_14 * m13)) + (tmp_17 * m17)))), (d * ((((tmp_13 * m5) + (tmp_18 * m13)) + (tmp_21 * m17)) - (((tmp_12 * m5) + (tmp_19 * m13)) + (tmp_20 * m17)))), (d * ((((tmp_14 * m5) + (tmp_19 * m9)) + (tmp_22 * m17)) - (((tmp_15 * m5) + (tmp_18 * m9)) + (tmp_23 * m17)))), (d * ((((tmp_17 * m5) + (tmp_20 * m9)) + (tmp_23 * m13)) - (((tmp_16 * m5) + (tmp_21 * m9)) + (tmp_22 * m13)))), (d * ((((tmp_14 * m12) + (tmp_17 * m16)) + (tmp_13 * m8)) - (((tmp_16 * m16) + (tmp_12 * m8)) + (tmp_15 * m12)))), (d * ((((tmp_20 * m16) + (tmp_12 * m4)) + (tmp_19 * m12)) - (((tmp_18 * m12) + (tmp_21 * m16)) + (tmp_13 * m4)))), (d * ((((tmp_18 * m8) + (tmp_23 * m16)) + (tmp_15 * m4)) - (((tmp_22 * m16) + (tmp_14 * m4)) + (tmp_19 * m8)))), (d * ((((tmp_22 * m12) + (tmp_16 * m4)) + (tmp_21 * m8)) - (((tmp_20 * m8) + (tmp_23 * m12)) + (tmp_17 * m4))))]);
+  function Camera_get_GlobalDirection () {
+    return this.fGlobalDirection;
   };
 
-  function Camera_MakeLookAt (cameraPosition, target, up) {
-    var zAxis = $T01().op_Subtraction(cameraPosition, target);
-    zAxis.Normalize();
-    var xAxis = $T01().op_ExclusiveOr(up, zAxis);
-    var yAxis = $T01().op_ExclusiveOr(zAxis, xAxis);
-    return JSIL.Array.New($T02(), [xAxis.X, xAxis.Y, xAxis.Z, 0, yAxis.X, yAxis.Y, yAxis.Z, 0, zAxis.X, zAxis.Y, zAxis.Z, 0, cameraPosition.X, cameraPosition.Y, cameraPosition.Z, 1]);
+  function Camera_get_Location () {
+    return this.fLocation;
   };
 
-  function Camera_MoveTo (obj) {
-    this.velocity = $T01().op_Subtraction(obj.GlObject$Position$value, this.position);
-    this.initPosition = this.position;
-    this.finalPosition = obj.GlObject$Position$value;
-    this.acceleration = $T01().op_Subtraction($S01().Construct(), $S02().CallStatic($T01(), "op_Multiply", null, this.position, 0.25));
-    this.UpdateMoveTo();
+  function Camera_get_LookAt () {
+    return this.fLookAt;
   };
 
-  function Camera_MoveToNow$00 (obj) {
-    this.position = obj.GlObject$Position$value;
+  function Camera_get_MatrixWorld () {
+    return this.fMatrixWorld;
   };
 
-  function Camera_MoveToNow$01 (x, y, z) {
-    this.position.X = +x;
-    this.position.Y = +y;
-    this.position.Z = +z;
+  function Camera_get_Pitch () {
+    return this.RAD2DEG(this.fRotation.X);
   };
 
-  function Camera_RotatePitch (radians) {
-    var sine = Math.fround(Math.sin(radians));
-    var cosine = Math.fround(Math.cos(radians));
-    this.up.Y = cosine * +(this.up).Length();
-    this.up.Z = sine * +(this.up).Length();
-    this.forward.Y = -sine * +(this.forward).Length();
-    this.forward.Z = cosine * +(this.forward).Length();
+  function Camera_get_Rotation () {
+    return this.fRotation;
   };
 
-  function Camera_RotateRoll (radians) {
-    var sine = Math.fround(Math.sin(radians));
-    var cosine = Math.fround(Math.cos(radians));
-    this.right.X = cosine * +(this.right).Length();
-    this.right.Y = sine * +(this.right).Length();
-    this.up.X = -sine * +(this.forward).Length();
-    this.up.Y = cosine * +(this.forward).Length();
+  function Camera_get_Velocity () {
+    return this.fVelocity;
   };
 
-  function Camera_RotateYaw (radians) {
-    var sine = Math.fround(Math.sin(radians));
-    var cosine = Math.fround(Math.cos(radians));
-    this.right.X = cosine * +(this.right).Length();
-    this.right.Z = sine * +(this.right).Length();
-    this.forward.X = -sine * +(this.forward).Length();
-    this.forward.Z = cosine * +(this.forward).Length();
+  function Camera_get_WorldMatrixStack () {
+    if (this.fWorldMatrixStack === null) {
+      this.fWorldMatrixStack = $S03().Construct();
+    }
+    return this.fWorldMatrixStack;
   };
 
-  function Camera_UpdateLookAt () {
-    var look = $T01().op_Subtraction(this.finalLookAt, this.lookAt);
-    this.lookAtVel = $S02().CallStatic($T01(), "op_Multiply", null, look, 0.5);
+  function Camera_get_Yaw () {
+    return this.RAD2DEG(this.get_Rotation().Y);
   };
 
-  function Camera_UpdateMoveTo () {
-    var pos = $T01().op_Subtraction(this.finalPosition, this.position);
-    this.velocity = $S02().CallStatic($T01(), "op_Multiply", null, pos, 0.5);
+  function Camera_GetMatrix () {
+    this.Update();
+    return this.get_MatrixWorld();
+  };
+
+  function Camera_IncrementCameraPitch (Angle) {
+    this.fRotation.Y += +this.DEG2RAD(Angle);
+  };
+
+  function Camera_IncrementCameraYaw (Angle) {
+    this.fRotation.X += +this.DEG2RAD(Angle);
+  };
+
+  function Camera_Point (XEye, YEye, ZEye, XAt, YAt, ZAt) {
+    var XRot = Math.fround(Math.atan2(-(+YAt - +YEye), Math.sqrt((((+XAt - +XEye) * (+XAt - +XEye)) + ((+ZAt - +ZEye) * (+ZAt - +ZEye))))));
+    var YRot = Math.fround(Math.atan2((+XAt - +XEye), (+ZAt - +ZEye)));
+    this.set_Location($S01().Construct(XEye, YEye, ZEye));
+    this.set_Rotation($S01().Construct(XRot, YRot, 0));
+    return true;
+  };
+
+  function Camera_PopMatrixState () {
+    var result = $T08().prototype.Pop.call(this.get_WorldMatrixStack());
+    this.SetWorldMatrix(result);
+    return result;
+  };
+
+  function Camera_PushMatrixState () {
+    var Result = $T00().Matrices.ModelView;
+    $T08().prototype.Push.call(this.get_WorldMatrixStack(), Result);
+    return Result;
+  };
+
+  function Camera_RAD2DEG (a) {
+    return (57.2957764 * +a);
+  };
+
+  function Camera_remove_EyePartChanged (value) {
+    var eventHandler = this.EyePartChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Remove(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "EyePartChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_remove_LookAtChanged (value) {
+    var eventHandler = this.LookAtChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Remove(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "LookAtChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_remove_RotationChanged (value) {
+    var eventHandler = this.RotationChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Remove(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "RotationChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_remove_VelocityChanged (value) {
+    var eventHandler = this.VelocityChanged;
+
+    do {
+      var eventHandler2 = eventHandler;
+      var value2 = $T03().Remove(eventHandler2, value);
+      eventHandler = $T04().CompareExchange$b1($T02())(/* ref */ new JSIL.MemberReference(this, "VelocityChanged"), value2, eventHandler2);
+    } while (eventHandler !== eventHandler2);
+  };
+
+  function Camera_set_BillboardMatrix (value) {
+    this.fBillboardMatrix = value;
+  };
+
+  function Camera_set_EyePart (value) {
+    if ($T01().op_Inequality(this.get_Location(), value)) {
+      this.set_Location(value);
+      if (this.EyePartChanged !== null) {
+        this.EyePartChanged(this, $T0B().Empty);
+      }
+    }
+    this.set_Location(value);
+  };
+
+  function Camera_set_GlobalDirection (value) {
+    this.fGlobalDirection = value;
+  };
+
+  function Camera_set_Location (value) {
+    this.fLocation = value;
+  };
+
+  function Camera_set_LookAt (value) {
+    this.fLookAt = value;
+    if (this.LookAtChanged !== null) {
+      this.LookAtChanged(this, $T0B().Empty);
+    }
+  };
+
+  function Camera_set_MatrixWorld (value) {
+    this.fMatrixWorld = value;
+  };
+
+  function Camera_set_Pitch (value) {
+    if (+value > 60) {
+      value = 60;
+    }
+    if (+value < -60) {
+      value = -60;
+    }
+    this.fRotation.X = +this.DEG2RAD(value);
+  };
+
+  function Camera_set_Rotation (value) {
+    this.fRotation = value;
+    if (this.RotationChanged !== null) {
+      this.RotationChanged(this, $T0B().Empty);
+    }
+  };
+
+  function Camera_set_Velocity (value) {
+    if (+value.Length() > 15) {
+      value.Normalize();
+      value = $S02().CallStatic($T01(), "op_Multiply", null, value, 15);
+    }
+    if (+value.Length() < -15) {
+      value.Normalize();
+      value = $S02().CallStatic($T01(), "op_Multiply", null, value, -15);
+    }
+    this.fVelocity = value;
+    if (this.VelocityChanged !== null) {
+      this.VelocityChanged(this, $T0B().Empty);
+    }
+  };
+
+  function Camera_set_Yaw (value) {
+    if (!((+value < 360) && (+value > -360))) {
+      this.fRotation.Y = 0;
+    } else {
+      this.fRotation.Y = +this.DEG2RAD(value);
+    }
+  };
+
+  function Camera_SetBillBoardMatrix (position) {
+    this.fBillboardMatrix.M41 = +position.X;
+    this.fBillboardMatrix.M42 = +position.Y;
+    this.fBillboardMatrix.M43 = +position.Z;
+    $T00().Matrices.Billboard = $T0A().$Cast(this.fBillboardMatrix);
+  };
+
+  function Camera_SetEndTrack () {
+    this.EndPos.X = +this.get_Location().X;
+    this.EndPos.Y = +this.get_Location().Y;
+    this.EndPos.Z = +this.get_Location().Z;
+    this.EndRot.X = +this.get_Rotation().X;
+    this.EndRot.Y = +this.get_Rotation().Y;
+    this.EndRot.Z = +this.get_Rotation().Z;
+    return true;
+  };
+
+  function Camera_SetStartTrack () {
+    this.StartPos.X = +this.get_Location().X;
+    this.StartPos.Y = +this.get_Location().Y;
+    this.StartPos.Z = +this.get_Location().Z;
+    this.StartRot.X = +this.get_Rotation().X;
+    this.StartRot.Y = +this.get_Rotation().Y;
+    this.StartRot.Z = +this.get_Rotation().Z;
+    return true;
+  };
+
+  function Camera_SetWorldMatrix (WorldMatrix) {
+    $T00().Matrices.ModelView = $T0A().$Cast(WorldMatrix);
+  };
+
+  function Camera_Track (Time, Length) {
+    var TimeOffset = +Length * +Time;
+    var x = +(((+this.EndPos.X - +this.StartPos.X) / +Length)) * TimeOffset;
+    var y = +(((+this.EndPos.Y - +this.StartPos.Y) / +Length)) * TimeOffset;
+    var z = +(((+this.EndPos.Z - +this.StartPos.Z) / +Length)) * TimeOffset;
+    this.set_Location($S01().Construct((+this.StartPos.X + x), (+this.StartPos.Y + y), (+this.StartPos.Z + z)));
+    x = +(((+this.EndRot.X - +this.StartRot.X) / +Length)) * TimeOffset;
+    y = +(((+this.EndRot.Y - +this.StartRot.Y) / +Length)) * TimeOffset;
+    z = +(((+this.EndRot.Z - +this.StartRot.Z) / +Length)) * TimeOffset;
+    this.set_Rotation($S01().Construct((+this.StartRot.X + x), (+this.StartRot.Y + y), (+this.StartRot.Z + z)));
+    return true;
+  };
+
+  function Camera_Update () {
+    $T00().GLMatrix4.identity(this.MatrixTranslation);
+    $T00().GLMatrix4.identity(this.MatrixRotation);
+    $T00().GLMatrix4.translate(this.MatrixTranslation, ($T01().op_Subtraction($S00().Construct(), this.fLocation)).ToFloatVector(), this.MatrixTranslation);
+    $T00().GLMatrix4.rotateX(this.MatrixRotation, this.get_Rotation().X, this.MatrixRotation);
+    $T00().GLMatrix4.rotateY(this.MatrixRotation, this.get_Rotation().Y, this.MatrixRotation);
+    $T00().GLMatrix4.rotateZ(this.MatrixRotation, this.get_Rotation().Z, this.MatrixRotation);
+    $T00().GLMatrix4.multiply(this.MatrixRotation, this.MatrixTranslation, $T00().Matrices.ModelView);
+    return true;
   };
 
   JSIL.MakeType({
@@ -419,101 +607,311 @@ JSIL.DeclareNamespace("RiftGL.View");
       Camera__ctor
     );
 
+    $.Method({Static:false, Public:true }, "add_EyePartChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_add_EyePartChanged
+    );
+
+    $.Method({Static:false, Public:true }, "add_LookAtChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_add_LookAtChanged
+    );
+
+    $.Method({Static:false, Public:true }, "add_RotationChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_add_RotationChanged
+    );
+
+    $.Method({Static:false, Public:true }, "add_VelocityChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_add_VelocityChanged
+    );
+
     $.Method({Static:false, Public:true }, "Animate", 
       JSIL.MethodSignature.Action($.Single), 
       Camera_Animate
     );
 
-    $.Method({Static:false, Public:true }, "Deg2Rad", 
+    $.Method({Static:false, Public:true }, "Center", 
+      JSIL.MethodSignature.Void, 
+      Camera_Center
+    );
+
+    $.Method({Static:false, Public:false}, "DEG2RAD", 
       new JSIL.MethodSignature($.Single, [$.Single]), 
-      Camera_Deg2Rad
+      Camera_DEG2RAD
     );
 
-    $.Method({Static:false, Public:true }, "LookAt", 
-      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.GlObject")), 
-      Camera_LookAt
+    $.Method({Static:false, Public:true }, "get_BillboardMatrix", 
+      JSIL.MethodSignature.Return($.Object), 
+      Camera_get_BillboardMatrix
     );
 
-    $.Method({Static:false, Public:true }, "LookAtNow", 
-      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.GlObject")), 
-      Camera_LookAtNow
+    $.Method({Static:false, Public:true }, "get_EyePart", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_EyePart
     );
 
-    $.Method({Static:false, Public:false}, "MakeInverse", 
-      new JSIL.MethodSignature($jsilcore.TypeRef("System.Array", [$.Single]), [$jsilcore.TypeRef("System.Array", [$.Single])]), 
-      Camera_MakeInverse
+    $.Method({Static:false, Public:true }, "get_GlobalDirection", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_GlobalDirection
     );
 
-    $.Method({Static:false, Public:false}, "MakeLookAt", 
-      new JSIL.MethodSignature($jsilcore.TypeRef("System.Array", [$.Single]), [
-          $asm02.TypeRef("RiftGL.Objects.Vector"), $asm02.TypeRef("RiftGL.Objects.Vector"), 
-          $asm02.TypeRef("RiftGL.Objects.Vector")
-        ]), 
-      Camera_MakeLookAt
+    $.Method({Static:false, Public:true }, "get_Location", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_Location
     );
 
-    $.Method({Static:false, Public:true }, "MoveTo", 
-      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.GlObject")), 
-      Camera_MoveTo
+    $.Method({Static:false, Public:true }, "get_LookAt", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_LookAt
     );
 
-    $.Method({Static:false, Public:true }, "MoveToNow", 
-      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.GlObject")), 
-      Camera_MoveToNow$00
+    $.Method({Static:false, Public:true }, "get_MatrixWorld", 
+      JSIL.MethodSignature.Return($.Object), 
+      Camera_get_MatrixWorld
     );
 
-    $.Method({Static:false, Public:true }, "MoveToNow", 
-      new JSIL.MethodSignature(null, [
+    $.Method({Static:false, Public:true }, "get_Pitch", 
+      JSIL.MethodSignature.Return($.Single), 
+      Camera_get_Pitch
+    );
+
+    $.Method({Static:false, Public:true }, "get_Rotation", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_Rotation
+    );
+
+    $.Method({Static:false, Public:true }, "get_Velocity", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_get_Velocity
+    );
+
+    $.Method({Static:false, Public:false}, "get_WorldMatrixStack", 
+      JSIL.MethodSignature.Return($asm03.TypeRef("System.Collections.Generic.Stack`1", [$.Object])), 
+      Camera_get_WorldMatrixStack
+    );
+
+    $.Method({Static:false, Public:true }, "get_Yaw", 
+      JSIL.MethodSignature.Return($.Single), 
+      Camera_get_Yaw
+    );
+
+    $.Method({Static:false, Public:true }, "GetMatrix", 
+      JSIL.MethodSignature.Return($.Object), 
+      Camera_GetMatrix
+    );
+
+    $.Method({Static:false, Public:true }, "IncrementCameraPitch", 
+      JSIL.MethodSignature.Action($.Single), 
+      Camera_IncrementCameraPitch
+    );
+
+    $.Method({Static:false, Public:true }, "IncrementCameraYaw", 
+      JSIL.MethodSignature.Action($.Single), 
+      Camera_IncrementCameraYaw
+    );
+
+    $.Method({Static:false, Public:true }, "Point", 
+      new JSIL.MethodSignature($.Boolean, [
           $.Single, $.Single, 
-          $.Single
+          $.Single, $.Single, 
+          $.Single, $.Single
         ]), 
-      Camera_MoveToNow$01
+      Camera_Point
     );
 
-    $.Method({Static:false, Public:true }, "RotatePitch", 
+    $.Method({Static:false, Public:true }, "PopMatrixState", 
+      JSIL.MethodSignature.Return($.Object), 
+      Camera_PopMatrixState
+    );
+
+    $.Method({Static:false, Public:true }, "PushMatrixState", 
+      JSIL.MethodSignature.Return($.Object), 
+      Camera_PushMatrixState
+    );
+
+    $.Method({Static:false, Public:false}, "RAD2DEG", 
+      new JSIL.MethodSignature($.Single, [$.Single]), 
+      Camera_RAD2DEG
+    );
+
+    $.Method({Static:false, Public:true }, "remove_EyePartChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_remove_EyePartChanged
+    );
+
+    $.Method({Static:false, Public:true }, "remove_LookAtChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_remove_LookAtChanged
+    );
+
+    $.Method({Static:false, Public:true }, "remove_RotationChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_remove_RotationChanged
+    );
+
+    $.Method({Static:false, Public:true }, "remove_VelocityChanged", 
+      JSIL.MethodSignature.Action($asm01.TypeRef("System.EventHandler")), 
+      Camera_remove_VelocityChanged
+    );
+
+    $.Method({Static:false, Public:true }, "set_BillboardMatrix", 
+      JSIL.MethodSignature.Action($.Object), 
+      Camera_set_BillboardMatrix
+    )
+      .Parameter(0, "value", function (_) {
+          _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
+        });
+
+    $.Method({Static:false, Public:true }, "set_EyePart", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_EyePart
+    );
+
+    $.Method({Static:false, Public:true }, "set_GlobalDirection", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_GlobalDirection
+    );
+
+    $.Method({Static:false, Public:true }, "set_Location", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_Location
+    );
+
+    $.Method({Static:false, Public:true }, "set_LookAt", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_LookAt
+    );
+
+    $.Method({Static:false, Public:true }, "set_MatrixWorld", 
+      JSIL.MethodSignature.Action($.Object), 
+      Camera_set_MatrixWorld
+    )
+      .Parameter(0, "value", function (_) {
+          _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
+        });
+
+    $.Method({Static:false, Public:true }, "set_Pitch", 
       JSIL.MethodSignature.Action($.Single), 
-      Camera_RotatePitch
+      Camera_set_Pitch
     );
 
-    $.Method({Static:false, Public:true }, "RotateRoll", 
+    $.Method({Static:false, Public:true }, "set_Rotation", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_Rotation
+    );
+
+    $.Method({Static:false, Public:true }, "set_Velocity", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_set_Velocity
+    );
+
+    $.Method({Static:false, Public:true }, "set_Yaw", 
       JSIL.MethodSignature.Action($.Single), 
-      Camera_RotateRoll
+      Camera_set_Yaw
     );
 
-    $.Method({Static:false, Public:true }, "RotateYaw", 
-      JSIL.MethodSignature.Action($.Single), 
-      Camera_RotateYaw
+    $.Method({Static:false, Public:true }, "SetBillBoardMatrix", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Vector")), 
+      Camera_SetBillBoardMatrix
     );
 
-    $.Method({Static:false, Public:false}, "UpdateLookAt", 
-      JSIL.MethodSignature.Void, 
-      Camera_UpdateLookAt
+    $.Method({Static:false, Public:true }, "SetEndTrack", 
+      JSIL.MethodSignature.Return($.Boolean), 
+      Camera_SetEndTrack
     );
 
-    $.Method({Static:false, Public:false}, "UpdateMoveTo", 
-      JSIL.MethodSignature.Void, 
-      Camera_UpdateMoveTo
+    $.Method({Static:false, Public:true }, "SetStartTrack", 
+      JSIL.MethodSignature.Return($.Boolean), 
+      Camera_SetStartTrack
     );
 
-    $.Field({Static:false, Public:true }, "position", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "velocity", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "acceleration", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "lookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "up", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "forward", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "right", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:true }, "yaw", $.Single); 
-    $.Field({Static:false, Public:true }, "pitch", $.Single); 
-    $.Field({Static:false, Public:true }, "screenWidth", $.Int32); 
-    $.Field({Static:false, Public:true }, "screenHeight", $.Int32); 
-    $.Field({Static:false, Public:true }, "centerX", $.Int32); 
-    $.Field({Static:false, Public:true }, "centerY", $.Int32); 
-    $.Field({Static:false, Public:false}, "initPosition", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:false}, "finalPosition", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:false}, "initLookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:false}, "finalLookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:false}, "lookAtVel", $asm02.TypeRef("RiftGL.Objects.Vector")); 
-    $.Field({Static:false, Public:false}, "lookAtAccel", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Method({Static:false, Public:true }, "SetWorldMatrix", 
+      JSIL.MethodSignature.Action($.Object), 
+      Camera_SetWorldMatrix
+    )
+      .Parameter(0, "WorldMatrix", function (_) {
+          _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
+        });
+
+    $.Method({Static:false, Public:true }, "Track", 
+      new JSIL.MethodSignature($.Boolean, [$.Single, $.Single]), 
+      Camera_Track
+    );
+
+    $.Method({Static:false, Public:true }, "Update", 
+      JSIL.MethodSignature.Return($.Boolean), 
+      Camera_Update
+    );
+
+    $.Constant({Static:true , Public:false}, "PI", 3.14159274); 
+    $.Field({Static:false, Public:false}, "EyePartChanged", $asm01.TypeRef("System.EventHandler")); 
+    $.Field({Static:false, Public:true }, "StartPos", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:true }, "StartRot", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:true }, "EndPos", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:true }, "EndRot", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fMatrixWorld", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
+    $.Field({Static:false, Public:true }, "MatrixTranslation", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
+    $.Field({Static:false, Public:true }, "MatrixRotation", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
+    $.Field({Static:false, Public:false}, "LookAtChanged", $asm01.TypeRef("System.EventHandler")); 
+    $.Field({Static:false, Public:false}, "VelocityChanged", $asm01.TypeRef("System.EventHandler")); 
+    $.Field({Static:false, Public:false}, "fRotation", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "RotationChanged", $asm01.TypeRef("System.EventHandler")); 
+    $.Field({Static:false, Public:false}, "fBillboardMatrix", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
+    $.Field({Static:false, Public:false}, "fGlobalDirection", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fInitPosition", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fFinalPosition", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fInitLookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fFinalLookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fLookAtVelocity", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fLookAtAcceleration", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fUp", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fForward", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fRight", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fLocation", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fLookAt", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fVelocity", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fAcceleration", $asm02.TypeRef("RiftGL.Objects.Vector")); 
+    $.Field({Static:false, Public:false}, "fWorldMatrixStack", $asm03.TypeRef("System.Collections.Generic.Stack`1", [$.Object]))
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"), function () { return [[false, true]]; }); 
+    $.Property({Static:false, Public:true }, "BillboardMatrix", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"));
+
+    $.Property({Static:false, Public:true }, "GlobalDirection", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "EyePart", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "MatrixWorld", $.Object)
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"));
+
+    $.Property({Static:false, Public:true }, "LookAt", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "Velocity", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "Location", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "Rotation", $asm02.TypeRef("RiftGL.Objects.Vector"));
+
+    $.Property({Static:false, Public:true }, "Yaw", $.Single);
+
+    $.Property({Static:false, Public:true }, "Pitch", $.Single);
+
+    $.Property({Static:false, Public:false}, "WorldMatrixStack", $asm03.TypeRef("System.Collections.Generic.Stack`1", [$.Object]))
+      .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"), function () { return [[false, true]]; });
+
+    $.Event({Static:false, Public:true }, "EyePartChanged", $asm01.TypeRef("System.EventHandler"));
+
+    $.Event({Static:false, Public:true }, "LookAtChanged", $asm01.TypeRef("System.EventHandler"));
+
+    $.Event({Static:false, Public:true }, "VelocityChanged", $asm01.TypeRef("System.EventHandler"));
+
+    $.Event({Static:false, Public:true }, "RotationChanged", $asm01.TypeRef("System.EventHandler"));
+
     return function (newThisType) { $thisType = newThisType; }; 
   });
 
@@ -636,6 +1034,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Field({Static:false, Public:true }, "Projection", $jsilcore.TypeRef("System.Array", [$.Single])); 
     $.Field({Static:false, Public:true }, "ModelView", $jsilcore.TypeRef("System.Array", [$.Single])); 
     $.Field({Static:false, Public:true }, "Normal", $jsilcore.TypeRef("System.Array", [$.Single])); 
+    $.Field({Static:false, Public:true }, "Billboard", $jsilcore.TypeRef("System.Array", [$.Single])); 
     return function (newThisType) { $thisType = newThisType; }; 
   });
 
@@ -1403,17 +1802,13 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Crate_OnDraw (camera) {
-    $T02().GLMatrix4.translate($T02().Matrices.ModelView, JSIL.Array.New($T0A(), [this.GlObject$Position$value.X, this.GlObject$Position$value.Y, this.GlObject$Position$value.Z]));
-    var array = JSIL.Array.New($T0A(), 3);
-    array[0] = 1;
-    $T02().GLMatrix4.rotate($T02().Matrices.ModelView, $thisType.DegreesToRadians(this.Rotation.X), array);
-    array = JSIL.Array.New($T0A(), 3);
-    array[1] = 1;
-    $T02().GLMatrix4.rotate($T02().Matrices.ModelView, $thisType.DegreesToRadians(this.Rotation.Y), array);
-    var arg_2B2_2 = camera.GL;
-    arg_2B2_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.VertexPositions);
-    var arg_3AA_2 = camera.GL;
-    arg_3AA_2.vertexAttribPointer(
+    $T02().Matrices.ModelView = $T10().$Cast($T02().GLMatrix4.translate($T02().Matrices.ModelView, JSIL.Array.New($T0A(), [this.GlObject$Position$value.X, this.GlObject$Position$value.Y, this.GlObject$Position$value.Z])));
+    $T02().Matrices.ModelView = $T10().$Cast($T02().GLMatrix4.rotateX($T02().Matrices.ModelView, $thisType.DegreesToRadians(this.Rotation.X)));
+    $T02().Matrices.ModelView = $T10().$Cast($T02().GLMatrix4.rotateY($T02().Matrices.ModelView, $thisType.DegreesToRadians(this.Rotation.Y)));
+    var arg_350_2 = camera.GL;
+    arg_350_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.VertexPositions);
+    var arg_448_2 = camera.GL;
+    arg_448_2.vertexAttribPointer(
       $T02().Attributes.VertexPosition, 
       3, 
       camera.GL.FLOAT, 
@@ -1421,10 +1816,10 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_476_2 = camera.GL;
-    arg_476_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.VertexNormals);
-    var arg_56E_2 = camera.GL;
-    arg_56E_2.vertexAttribPointer(
+    var arg_514_2 = camera.GL;
+    arg_514_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.VertexNormals);
+    var arg_60C_2 = camera.GL;
+    arg_60C_2.vertexAttribPointer(
       $T02().Attributes.VertexNormal, 
       3, 
       camera.GL.FLOAT, 
@@ -1432,10 +1827,10 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_63A_2 = camera.GL;
-    arg_63A_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.TextureCoords);
-    var arg_732_2 = camera.GL;
-    arg_732_2.vertexAttribPointer(
+    var arg_6D8_2 = camera.GL;
+    arg_6D8_2.bindBuffer(camera.GL.ARRAY_BUFFER, $T02().Buffers.TextureCoords);
+    var arg_7D0_2 = camera.GL;
+    arg_7D0_2.vertexAttribPointer(
       $T02().Attributes.TextureCoord, 
       2, 
       camera.GL.FLOAT, 
@@ -1443,22 +1838,22 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_7EA_2 = camera.GL;
-    arg_7EA_2.activeTexture(camera.GL.TEXTURE0);
-    var arg_8B1_2 = camera.GL;
-    arg_8B1_2.bindTexture(camera.GL.TEXTURE_2D, $thisType.CrateTexture);
+    var arg_888_2 = camera.GL;
+    arg_888_2.activeTexture(camera.GL.TEXTURE0);
+    var arg_94F_2 = camera.GL;
+    arg_94F_2.bindTexture(camera.GL.TEXTURE_2D, $thisType.CrateTexture);
     (camera.GL).uniform1i($T02().Uniforms.Sampler, 0);
-    var arg_9F6_2 = camera.GL;
-    arg_9F6_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, $T02().Buffers.Indices);
+    var arg_A94_2 = camera.GL;
+    arg_A94_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, $T02().Buffers.Indices);
     (camera.GL).uniformMatrix4fv($T02().Uniforms.ProjectionMatrix, false, $T02().Matrices.Projection);
     (camera.GL).uniformMatrix4fv($T02().Uniforms.ModelViewMatrix, false, $T02().Matrices.ModelView);
     $T02().GLMatrix4.toInverseMat3($T02().Matrices.ModelView, $T02().Matrices.Normal);
     $T02().GLMatrix3.transpose($T02().Matrices.Normal);
     (camera.GL).uniformMatrix3fv($T02().Uniforms.NormalMatrix, false, $T02().Matrices.Normal);
-    var arg_DBD_2 = camera.GL;
-    var arg_DBD_3 = camera.GL.TRIANGLES;
-    var arg_DBD_4 = ($T13().Indices.length | 0);
-    arg_DBD_2.drawElements(arg_DBD_3, arg_DBD_4, camera.GL.UNSIGNED_SHORT, 0);
+    var arg_E5B_2 = camera.GL;
+    var arg_E5B_3 = camera.GL.TRIANGLES;
+    var arg_E5B_4 = ($T13().Indices.length | 0);
+    arg_E5B_2.drawElements(arg_E5B_3, arg_E5B_4, camera.GL.UNSIGNED_SHORT, 0);
   };
 
   JSIL.MakeType({
@@ -1561,16 +1956,23 @@ JSIL.DeclareNamespace("RiftGL.View");
 (function Gui$Members () {
   var $, $thisType;
   var $T00 = function () {
-    return ($T00 = JSIL.Memoize($asm01.System.Single)) ();
+    return ($T00 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
   };
   var $T01 = function () {
-    return ($T01 = JSIL.Memoize($asm01.System.Int32)) ();
+    return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.Camera)) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
+  };
+  var $T03 = function () {
+    return ($T03 = JSIL.Memoize($asm01.System.Single)) ();
+  };
+  var $T04 = function () {
+    return ($T04 = JSIL.Memoize($asm01.System.Int32)) ();
   };
 
   function Gui__ctor () {
-  };
-
-  function Gui_Draw () {
+    $T00().prototype._ctor.call(this);
   };
 
   function Gui_get_CurrentTime () {
@@ -1579,6 +1981,15 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function Gui_get_EnemiesLeft () {
     return this.Gui$EnemiesLeft$value;
+  };
+
+  function Gui_OnDraw (camera) {
+    $T02().Document.getElementById("cameraLocationX").value = +camera.get_Location().X;
+    $T02().Document.getElementById("cameraLocationY").value = +camera.get_Location().Y;
+    $T02().Document.getElementById("cameraLocationZ").value = +camera.get_Location().Z;
+    $T02().Document.getElementById("cameraRotationX").value = +camera.get_Rotation().X;
+    $T02().Document.getElementById("cameraRotationY").value = +camera.get_Rotation().Y;
+    $T02().Document.getElementById("cameraRotationZ").value = +camera.get_Rotation().Z;
   };
 
   function Gui_set_CurrentTime (value) {
@@ -1590,7 +2001,7 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   JSIL.MakeType({
-      BaseType: $asm01.TypeRef("System.Object"), 
+      BaseType: $asm02.TypeRef("RiftGL.Objects.GlObject"), 
       Name: "RiftGL.Objects.Gui", 
       IsPublic: true, 
       IsReferenceType: true, 
@@ -1601,11 +2012,6 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Method({Static:false, Public:true }, ".ctor", 
       JSIL.MethodSignature.Void, 
       Gui__ctor
-    );
-
-    $.Method({Static:false, Public:true }, "Draw", 
-      JSIL.MethodSignature.Void, 
-      Gui_Draw
     );
 
     $.Method({Static:false, Public:true }, "get_CurrentTime", 
@@ -1619,6 +2025,11 @@ JSIL.DeclareNamespace("RiftGL.View");
       Gui_get_EnemiesLeft
     )
       .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:false, Virtual:true }, "OnDraw", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Camera")), 
+      Gui_OnDraw
+    );
 
     $.Method({Static:false, Public:true }, "set_CurrentTime", 
       JSIL.MethodSignature.Action($.Single), 
@@ -2081,6 +2492,12 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_GetHeight (x, z) {
+    if (+z < 0) {
+      z = 0;
+    }
+    if (+x < 0) {
+      x = 0;
+    }
     var projCameraX = Math.fround(x);
     var projCameraZ = Math.fround(z);
     var col0 = ((projCameraX) | 0);
@@ -2876,6 +3293,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     );
   };
 
+  function Vector_ToFloatVector () {
+    return JSIL.Array.New($T00(), [this.X, this.Y, this.Z]);
+  };
+
   function Vector_UnitVector () {
     return $thisType.op_Division(this, this.Length());
   };
@@ -2992,6 +3413,11 @@ JSIL.DeclareNamespace("RiftGL.View");
       Vector_Reflection
     );
 
+    $.Method({Static:false, Public:true }, "ToFloatVector", 
+      JSIL.MethodSignature.Return($jsilcore.TypeRef("System.Array", [$.Single])), 
+      Vector_ToFloatVector
+    );
+
     $.Method({Static:false, Public:true }, "UnitVector", 
       JSIL.MethodSignature.Return($.Type), 
       Vector_UnitVector
@@ -3076,9 +3502,12 @@ JSIL.DeclareNamespace("RiftGL.View");
 
   function World_Animate (deltaTime) {
     var $temp00;
-    var terrainHeight = +(this.World$Terrain$value).GetHeight(this.World$Camera$value.position.X, this.World$Camera$value.position.Z);
-    if (+this.World$Camera$value.position.Y < (terrainHeight - +this.World$Player$value.GlObject$Size$value)) {
-      this.World$Camera$value.position.Y = terrainHeight - +this.World$Player$value.GlObject$Size$value;
+    var terrainHeight = +(this.World$Terrain$value).GetHeight(
+      (this.World$Camera$value).get_Location().X, 
+      (this.World$Camera$value).get_Location().Z
+    );
+    if (+(this.World$Camera$value).get_Location().Y < (terrainHeight + +this.World$Player$value.GlObject$Size$value)) {
+      this.World$Camera$value.Location.Y = terrainHeight + +this.World$Player$value.GlObject$Size$value;
     }
     (this.World$Terrain$value).Animate(deltaTime);
     this.World$Gui$value.Gui$CurrentTime$value = +this.World$timeStart$value - +this.World$timeElapsed$value;
@@ -3092,9 +3521,9 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function World_Draw (camera) {
-    $T09().GLMatrix4.identity($T09().Matrices.ModelView);
-    $T09().GLMatrix4.translate($T09().Matrices.ModelView, JSIL.Array.New($T07(), [camera.position.X, camera.position.Y, camera.position.Z]));
+    $T09().GLMatrix4.translate($T09().Matrices.ModelView, $T09().Matrices.ModelView, JSIL.Array.New($T07(), [camera.get_Location().X, camera.get_Location().Y, camera.get_Location().Z]));
     (this.World$Terrain$value).Draw(camera);
+    (this.World$Crate$value).Draw(camera);
   };
 
   function World_get_AudioSystem () {
@@ -3407,37 +3836,43 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T02 = JSIL.Memoize($asm01.System.Environment)) ();
   };
   var $T03 = function () {
-    return ($T03 = JSIL.Memoize($asm02.RiftGL.Objects.Camera)) ();
+    return ($T03 = JSIL.Memoize($asm01.System.Single)) ();
   };
   var $T04 = function () {
-    return ($T04 = JSIL.Memoize($asm02.RiftGL.Objects.World)) ();
+    return ($T04 = JSIL.Memoize($asm02.RiftGL.Objects.Camera)) ();
   };
   var $T05 = function () {
-    return ($T05 = JSIL.Memoize($asm01.System.Object)) ();
+    return ($T05 = JSIL.Memoize($asm02.RiftGL.Objects.World)) ();
   };
   var $T06 = function () {
-    return ($T06 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
+    return ($T06 = JSIL.Memoize($asm01.System.Object)) ();
   };
   var $T07 = function () {
-    return ($T07 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+    return ($T07 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
   var $T08 = function () {
-    return ($T08 = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
+    return ($T08 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
   };
   var $T09 = function () {
-    return ($T09 = JSIL.Memoize($asm01.System.Exception)) ();
+    return ($T09 = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
   };
   var $T0A = function () {
-    return ($T0A = JSIL.Memoize($asm01.System.Console)) ();
+    return ($T0A = JSIL.Memoize($asm01.System.Exception)) ();
   };
   var $T0B = function () {
-    return ($T0B = JSIL.Memoize($asm01.System.Action$b1.Of($asm01.System.Object))) ();
+    return ($T0B = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T0C = function () {
-    return ($T0C = JSIL.Memoize($asm01.System.Single)) ();
+    return ($T0C = JSIL.Memoize($asm02.RiftGL.Objects.Gui)) ();
   };
   var $T0D = function () {
-    return ($T0D = JSIL.Memoize($asm01.System.Action)) ();
+    return ($T0D = JSIL.Memoize($asm01.System.Console)) ();
+  };
+  var $T0E = function () {
+    return ($T0E = JSIL.Memoize($asm01.System.Action$b1.Of($asm01.System.Object))) ();
+  };
+  var $T0F = function () {
+    return ($T0F = JSIL.Memoize($asm01.System.Action)) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
@@ -3449,10 +3884,11 @@ JSIL.DeclareNamespace("RiftGL.View");
   function Page_Animate () {
     var now = ($T02().get_TickCount() | 0);
     if (($thisType.LastTime | 0) !== 0) {
-      var elapsed = ((now - ($thisType.LastTime | 0)) | 0);
+      var elapsed = +((+(now - ($thisType.LastTime | 0)) / 1000));
       if (elapsed > 0) {
-        $thisType.Camera.Animate(+elapsed);
-        $thisType.World.Animate(+elapsed);
+        $thisType.Camera.Animate(elapsed);
+        $thisType.World.Animate(elapsed);
+        $thisType.Camera.Update();
       }
     }
     $thisType.LastTime = now;
@@ -3464,7 +3900,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     $thisType.Camera.GL.clear(arg_291_2 | $thisType.Camera.GL.DEPTH_BUFFER_BIT);
     $thisType.World.Draw($thisType.Camera);
     var lighting = $T00().$Cast($thisType.Document.getElementById("lighting").checked);
-    $thisType.Camera.GL.uniform1i($T06().Uniforms.UseLighting, (
+    $thisType.Camera.GL.uniform1i($T07().Uniforms.UseLighting, (
         lighting
            ? 1
            : 0)
@@ -3472,46 +3908,61 @@ JSIL.DeclareNamespace("RiftGL.View");
     if (lighting) {
       $thisType.Camera.DrawLighting();
     }
+    $thisType.Gui.Draw($thisType.Camera);
   };
 
   function Page_HandleKeys () {
+    var $temp00, $temp01;
     if ($thisType.HeldKeys[33]) {
-      $thisType.Camera.velocity.Y += 0.2;
+      $thisType.Camera.Velocity.Y += 2;
     }
     if ($thisType.HeldKeys[34]) {
-      $thisType.Camera.velocity.Y += -0.2;
+      $thisType.Camera.Velocity.Y -= 2;
     }
-    if ($thisType.HeldKeys[37]) {
-      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(1, 0, 0));
+    if (!(!$thisType.HeldKeys[37] && !$thisType.HeldKeys[65])) {
+      ($temp00 = +$thisType.Camera.get_Yaw() - 2.5, 
+        $thisType.Camera.set_Yaw($temp00), 
+        $temp00);
     }
-    if ($thisType.HeldKeys[39]) {
-      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(-1, 0, 0));
+    if (!(!$thisType.HeldKeys[39] && !$thisType.HeldKeys[68])) {
+      ($temp01 = +$thisType.Camera.get_Yaw() + 2.5, 
+        $thisType.Camera.set_Yaw($temp01), 
+        $temp01);
     }
-    if ($thisType.HeldKeys[38]) {
-      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(0, 0, 2));
+    if (!(!$thisType.HeldKeys[38] && !$thisType.HeldKeys[87])) {
+      $thisType.Camera.Velocity.Z += -2;
     }
-    if ($thisType.HeldKeys[40]) {
-      $thisType.Camera.velocity = $T07().op_Addition($thisType.Camera.velocity, $S00().Construct(0, 0, -2));
+    if (!(!$thisType.HeldKeys[40] && !$thisType.HeldKeys[83])) {
+      $thisType.Camera.Velocity.Z += 2;
+    }
+    if ($thisType.HeldKeys[107]) {
+      $thisType.mouseSensitivity += 0.05;
+    }
+    if ($thisType.HeldKeys[109]) {
+      $thisType.mouseSensitivity -= 0.05;
+      if (+$thisType.mouseSensitivity < 0.05) {
+        $thisType.mouseSensitivity = 0.05;
+      }
     }
   };
 
   function Page_InitBuffers () {
     var arg_12B_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_12B_3, $T06().Buffers.VertexPositions = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_12B_3, $T07().Buffers.VertexPositions = $thisType.Camera.GL.createBuffer());
     var arg_25C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_25C_3, $T08().Positions, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_25C_3, $T09().Positions, $thisType.Camera.GL.STATIC_DRAW);
     var arg_38C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_38C_3, $T06().Buffers.VertexNormals = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_38C_3, $T07().Buffers.VertexNormals = $thisType.Camera.GL.createBuffer());
     var arg_4BD_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_4BD_3, $T08().Normals, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_4BD_3, $T09().Normals, $thisType.Camera.GL.STATIC_DRAW);
     var arg_5ED_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_5ED_3, $T06().Buffers.TextureCoords = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_5ED_3, $T07().Buffers.TextureCoords = $thisType.Camera.GL.createBuffer());
     var arg_71E_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_71E_3, $T08().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_71E_3, $T09().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
     var arg_84E_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_84E_3, $T06().Buffers.Indices = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_84E_3, $T07().Buffers.Indices = $thisType.Camera.GL.createBuffer());
     var arg_97F_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_97F_3, $T08().Indices, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_97F_3, $T09().Indices, $thisType.Camera.GL.STATIC_DRAW);
   };
 
   function Page_InitGL ($exception) {
@@ -3521,14 +3972,15 @@ JSIL.DeclareNamespace("RiftGL.View");
     } catch ($exception) {
     }
     if (gl) {
-      $thisType.Camera = (new ($T03())()).__Initialize__({
+      $thisType.Camera = (new ($T04())()).__Initialize__({
           GL: gl, 
-          position: $S00().Construct(0, 0, -3)}
+          Location: $S00().Construct(0, 0, -3)}
       );
-      $T06().Document = $thisType.Document;
-      $T06().Canvas = $thisType.Canvas;
-      $thisType.World = new ($T04())($thisType.Camera);
-      $T0A().WriteLine("Initialized WebGL");
+      $T07().Document = $thisType.Document;
+      $T07().Canvas = $thisType.Canvas;
+      $thisType.World = new ($T05())($thisType.Camera);
+      $thisType.Gui = new ($T0C())();
+      $T0D().WriteLine("Initialized WebGL");
       var result = true;
     } else {
       JSIL.GlobalNamespace.alert("Could not initialize WebGL");
@@ -3555,9 +4007,9 @@ JSIL.DeclareNamespace("RiftGL.View");
       $thisType.InitShaders();
       $thisType.InitBuffers();
       $thisType.InitTexture();
-      $thisType.Document.onkeydown = $T0B().New($thisType, $thisType.OnKeyDown);
-      $thisType.Document.onkeyup = $T0B().New($thisType, $thisType.OnKeyUp);
-      $thisType.Document.onmousemove = $T0B().New($thisType, $thisType.OnMouseMove);
+      $thisType.Document.onkeydown = $T0E().New($thisType, $thisType.OnKeyDown);
+      $thisType.Document.onkeyup = $T0E().New($thisType, $thisType.OnKeyUp);
+      $thisType.Document.onmousemove = $T0E().New($thisType, $thisType.OnMouseMove);
       $thisType.Tick();
     }
   };
@@ -3571,24 +4023,6 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Page_OnMouseMove (e) {
-    var centerX = ($T06().Canvas.width / 2);
-    var centerY = ($T06().Canvas.height / 2);
-    var mX = $T0C().$Cast(e.x);
-    var mY = $T0C().$Cast(e.y);
-    if (mX < (centerX / 2)) {
-      $thisType.Camera.yaw -= 0.25 * +($thisType.mouseSensitivity);
-    }
-    if (mX > (centerX / 2)) {
-      $thisType.Camera.yaw += 0.25 * +($thisType.mouseSensitivity);
-    }
-    if (mY < (centerY / 2)) {
-      $thisType.Camera.pitch += 0.25 * +($thisType.mouseSensitivity);
-    }
-    if (mY > (centerY / 2)) {
-      $thisType.Camera.pitch -= 0.25 * +($thisType.mouseSensitivity);
-    }
-    $thisType.oldX = mX;
-    $thisType.oldY = mY;
   };
 
   function Page_OnPrepare () {
@@ -3597,10 +4031,11 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Page_Tick ($exception) {
-    JSIL.GlobalNamespace.requestAnimFrame($T0D().New($thisType, $thisType.Tick));
+    JSIL.GlobalNamespace.requestAnimFrame($T0F().New($thisType, $thisType.Tick));
     $thisType.HandleKeys();
     $thisType.OnPrepare();
     $thisType.World.Prepare();
+    $thisType.Gui.Prepare();
     $thisType.Animate();
     try {
       $thisType.DrawScene();
@@ -3700,16 +4135,13 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Field({Static:true , Public:true }, "LastTime", $.Int32, 0); 
     $.Field({Static:true , Public:true }, "Camera", $asm02.TypeRef("RiftGL.Objects.Camera")); 
     $.Field({Static:true , Public:true }, "World", $asm02.TypeRef("RiftGL.Objects.World")); 
+    $.Field({Static:true , Public:true }, "Gui", $asm02.TypeRef("RiftGL.Objects.Gui")); 
     $.Field({Static:true , Public:false}, "oldX", $.Single); 
     $.Field({Static:true , Public:false}, "oldY", $.Single); 
-    $.Field({Static:true , Public:false}, "yaw", $.Single, 0); 
-    $.Field({Static:true , Public:false}, "pitch", $.Single, 0); 
-    $.Field({Static:true , Public:false}, "mouseSensitivity", $.Int32, 10); 
+    $.Field({Static:true , Public:false}, "mouseSensitivity", $.Single, 10); 
     function Page__cctor () {
       $thisType.HeldKeys = JSIL.Array.New($T00(), 255);
       $thisType.LastTime = 0;
-      $thisType.yaw = 0;
-      $thisType.pitch = 0;
       $thisType.mouseSensitivity = 10;
     };
 

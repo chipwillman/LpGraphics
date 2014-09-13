@@ -43,6 +43,8 @@
      	public float GetHeight(double x, double z)
 	    {	
 		    float projCameraX, projCameraZ;
+     	    if (z < 0) z = 0;
+     	    if (x < 0) x = 0;
 
 		    // divide by the grid-spacing if it is not 1
 		    projCameraX = (float)x;
@@ -369,12 +371,6 @@
 
         protected override void OnDraw(Camera camera)
         {
-            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
-            //ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
-
-            //ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X), new[] { 1f, 0, 0 });
-            //ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y), new[] { 0, 1f, 0 });
-
             camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
             //camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
             camera.GL.vertexAttribPointer(TerrainShaderProgram.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);

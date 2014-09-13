@@ -52,10 +52,10 @@
 
         public void Animate(float deltaTime)
         {
-            var terrainHeight = Terrain.GetHeight(Camera.position.X, Camera.position.Z);
-            if (Camera.position.Y < terrainHeight - Player.Size)
+            var terrainHeight = Terrain.GetHeight(Camera.Location.X, Camera.Location.Z);
+            if (Camera.Location.Y < terrainHeight + Player.Size)
             {
-                Camera.position.Y = terrainHeight - Player.Size;
+                Camera.Location.Y = terrainHeight + Player.Size;
             }
 
             //if (Camera.position.X <= Terrain.GetScanDepth())
@@ -91,11 +91,11 @@
 
         public void Draw(Camera camera)
         {
-            ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
-            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { camera.position.X, camera.position.Y, camera.position.Z });
-
+            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
+            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, ViewPort.Matrices.ModelView, new[] { camera.Location.X, camera.Location.Y, camera.Location.Z });
+            
             Terrain.Draw(camera);
-            //Crate.Draw(camera);
+            Crate.Draw(camera);
             //Gui.Draw();
         }
 

@@ -236,9 +236,7 @@
     <Content Include="Scripts\Files\crate.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\Files\glMatrix-0.9.5.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Scripts\Files\glMatrix.js" />
     <Content Include="Scripts\Files\RiftGL.csproj.manifest.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

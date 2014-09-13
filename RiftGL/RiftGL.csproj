@@ -63,6 +63,9 @@
     <Compile Include="View\ViewPort.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="glMatrix.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="shader.fs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -70,9 +73,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="crate.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="glMatrix-0.9.5.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ground.png">

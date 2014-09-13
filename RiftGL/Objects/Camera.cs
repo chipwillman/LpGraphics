@@ -1,6 +1,7 @@
 ﻿namespace RiftGL.Objects
 {
     using System;
+    using System.Collections.Generic;
 
     using RiftGL.View;
 
@@ -8,317 +9,404 @@
     {
         public Camera()
         {
-            position = new Vector(0, 0, 0);
-            lookAt = new Vector(0, 0, 1);
-            forward = new Vector(0, 0, 1);
-            up = new Vector(0, 1, 0);
-            right = new Vector(1, 0, 0);
-            velocity = new Vector(0, 0, 0);
-            acceleration = new Vector(0, 0, 0);
-
-            yaw = 0.0f;
-            pitch = 0f;
+            MatrixTranslation = GLMatrix4.create();
+            MatrixRotation = GLMatrix4.create();
+            GLMatrix4.identity(MatrixTranslation);
+            GLMatrix4.identity(MatrixRotation);
+            //GLMatrix4.rotateX(MatrixTranslation, 0.0f, MatrixRotation);
+            Location = new Vector();
+            Rotation = new Vector();
+            Velocity = new Vector();
+            fAcceleration = new Vector();
+            LookAt = new Vector(0, 0, 1);
+            fLookAtAcceleration = new Vector();
+            fLookAtVelocity = new Vector();
+            fUp = new Vector(0, 1, 0);
         }
 
-        public Vector position;			// position of camera
-        public Vector velocity;			// velocity of camera
-        public Vector acceleration;		// acceleration of camera
-        public Vector lookAt;			// lookat vector
-
-        // up, forward, right vectors
-        public Vector up;
-        public Vector forward;
-        public Vector right;
-
-        // yaw and pitch angles
-        public float yaw;
-        public float pitch;
-
-        public int screenWidth, screenHeight;
-        public int centerX, centerY;
-
-        public void LookAt(GlObject obj)
+        public dynamic BillboardMatrix
         {
-            velocity = obj.Position - lookAt;
-            initLookAt = lookAt;
-            finalLookAt = obj.Position;
-
-            lookAtAccel = new Vector() - lookAt * 0.25f;
-
-            this.UpdateLookAt();
+            get { return fBillboardMatrix; }
+            set { fBillboardMatrix = value; }
         }
-
-        public void LookAtNow(GlObject obj)
+        
+        public Vector GlobalDirection
         {
-            lookAt = obj.Position;
+            get { return fGlobalDirection; }
+            set { fGlobalDirection = value; }
         }
-
-        public void MoveTo(GlObject obj)
+        
+        public event EventHandler EyePartChanged;
+        public Vector EyePart
         {
-            velocity = obj.Position - position;
-            initPosition = position;
-            finalPosition = obj.Position;
-
-            acceleration = new Vector() - position * 0.25f;
-
-            this.UpdateMoveTo();
+            get { return Location; }
+            set
+            {
+                if (Location != value)
+                {
+                    Location = value;
+                    if (EyePartChanged != null)
+                    {
+                        EyePartChanged(this, EventArgs.Empty);
+                    }
+                }
+                Location = value;
+            }
         }
+        
+        public Vector StartPos;
+        public Vector StartRot;
 
-        public void MoveToNow(GlObject obj)
+        public Vector EndPos;
+        public Vector EndRot;
+        
+        private dynamic fMatrixWorld;
+        public dynamic MatrixWorld
         {
-            position = obj.Position;
+            get
+            {
+                return fMatrixWorld;
+            }
+            set
+            {
+                fMatrixWorld = value;
+            }
         }
-
-        public void MoveToNow(float x, float y, float z)
+        
+        public dynamic MatrixTranslation;
+        public dynamic MatrixRotation;
+        
+        public event EventHandler LookAtChanged;
+        public Vector LookAt
         {
-            position.X = x;
-            position.Y = y;
-            position.Z = z;
+            get
+            {
+                return fLookAt;
+            }
+            set
+            {
+                fLookAt = value;
+                if (LookAtChanged != null)
+                {
+                    LookAtChanged(this, EventArgs.Empty);
+                }
+            }
         }
 
-    	// right rotation along y-axis (yaw)
-        public void RotateYaw(float radians)
+        public event EventHandler VelocityChanged;
+        public Vector Velocity
         {
+            get { return fVelocity; }
+            set
+            {
+                if (value.Length() > 15)
+                {
+                    value.Normalize();
+                    value *= 15f;
+                }
 
-            float sine = (float)Math.Sin(radians);
-            float cosine = (float)Math.Cos(radians);
+                if (value.Length() < -15)
+                {
+                    value.Normalize();
+                    value *= -15f;
+                }
 
-            right.X = cosine * right.Length();
-            right.Z = sine * right.Length();
-
-            forward.X = -sine * forward.Length();
-            forward.Z = cosine * forward.Length();
-
-            /*	   x      y    z      p
-                 |  cos(A)  0  -sin(A)  0 |
-             M = |  0       1   0       0 |
-                 |  sin(A)  0   cos(A)  0 |
-                 |  0       0   0       1 |
-            */
+                fVelocity = value;
+                if (VelocityChanged != null)
+                {
+                    VelocityChanged(this, EventArgs.Empty);
+                }
+            }
         }
 
-        public void RotatePitch(float radians)
+        public Vector Location
         {
-            float sine = (float)Math.Sin(radians);
-            float cosine = (float)Math.Cos(radians);
-
-            up.Y = cosine * up.Length();
-            up.Z = sine * up.Length();
-
-            forward.Y = -sine * forward.Length();
-            forward.Z = cosine * forward.Length();
-            /*     x   y      z       p
-                 |  1  0       0       0 |
-             M = |  0  cos(A) -sin(A)  0 |
-                 |  0  sin(A)  cos(A)  0 |
-                 |  0  0       0       1 |
-            */
+            get { return fLocation; }
+            set
+            {
+                fLocation = value;
+            }
         }
 
-        public void RotateRoll(float radians)
+        private Vector fRotation;
+        public event EventHandler RotationChanged;
+        public Vector Rotation
         {
-            float sine = (float)Math.Sin(radians);
-            float cosine = (float)Math.Cos(radians);
-
-            right.X = cosine * right.Length();
-            right.Y = sine * right.Length();
-
-            up.X = -sine * forward.Length();
-            up.Y = cosine * forward.Length();
-            /*
-                 |  cos(A)  -sin(A)   0   0 |
-             M = |  sin(A)   cos(A)   0   0 |
-                 |  0        0        1   0 |
-                 |  0        0        0   1 |
-            */
+            get { return fRotation; }
+            set
+            {
+                fRotation = value;
+                if (RotationChanged != null)
+                {
+                    RotationChanged(this, EventArgs.Empty);
+                }
+            }
         }
 
-        public float Deg2Rad(float a)
+        public float Yaw
         {
-            return (float)Math.PI / 180 * (a);
+            get { return RAD2DEG(Rotation.Y); }
+            set
+            {
+                if ((value >= 360.0f) || (value <= -360.0f))
+                {
+                    fRotation.Y = 0.0f;
+                }
+                else
+                {
+                    fRotation.Y = DEG2RAD(value);
+                }
+            }
         }
 
-        // do physics calculations
-        public void Animate(float deltaTime)
+        public float Pitch
         {
-            if ((yaw >= 360.0f) || (yaw <= -360.0f))
-                  yaw = 0.0f;
-
-            if (pitch > 60.0f)
-                 pitch = 60.0f;
-            if (pitch < -60.0f)
-                 pitch = -60.0f;
-            float cosYaw = (float)Math.Cos(this.Deg2Rad(yaw));
-            float sinYaw = (float)Math.Sin(this.Deg2Rad(yaw));
-            float sinPitch = (float)Math.Sin(this.Deg2Rad(pitch));
-
-            // added line
-            float cosPitch = (float)Math.Cos(this.Deg2Rad(pitch));
-
-            float speed = velocity.Z * deltaTime;
-            float strafeSpeed = velocity.X * deltaTime;
-
-            if (speed > 15.0f)
-                speed = 15.0f;
-            if (strafeSpeed > 15.0f)
-                strafeSpeed = 15.0f;
-            if (speed < -15.0f)
-                speed = -15.0f;
-            if (strafeSpeed < -15.0f)
-                strafeSpeed = -15.0f;
-
-            if (velocity.Length() > 0.0)
-                acceleration = new Vector() -velocity * 1.5f;
-
-            velocity += acceleration*deltaTime;
-
-            position.X += (float)(Math.Cos(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
-            position.Z += (float)(Math.Sin(this.Deg2Rad(yaw + 90.0f))) * strafeSpeed;
-            position.X += cosYaw * speed;
-            position.Z += sinYaw * speed;
-
-            // added *cosPitch
-            lookAt.X = position.X + (cosYaw*cosPitch);
-            lookAt.Y = position.Y + sinPitch;
-            lookAt.Z = position.Z + (sinYaw*cosPitch);
-            
-            var cameraMatrix = GLMatrix4.lookAt(position, lookAt, up);
-
-            // Make a view matrix from the camera matrix.
-            //Matrices.ModelView = GLMatrix4.inverse(cameraMatrix);
+            get { return RAD2DEG(fRotation.X); }
+            set
+            {
+                if (value > 60.0f)
+                {
+                    value = 60.0f;
+                }
+                if (value < -60.0f)
+                {
+                    value = -60.0f;
+                }
+                fRotation.X = DEG2RAD(value);
+            }
         }
 
+        public void Center()
+        {
+            fRotation.Y = 0.0f;
+        }
+
+        public void IncrementCameraYaw(float Angle)
+        {
+            fRotation.X += DEG2RAD(Angle);
+        }
+
+        public void IncrementCameraPitch(float Angle)
+        {
+            fRotation.Y += DEG2RAD(Angle);
+        }
+        
+        public void SetBillBoardMatrix(Vector position)
+        {
+            fBillboardMatrix.M41 = position.X;
+            fBillboardMatrix.M42 = position.Y;
+            fBillboardMatrix.M43 = position.Z;
+            Matrices.Billboard = fBillboardMatrix;
+        }
+        
+        public dynamic GetMatrix()
+        {
+            Update();
+            return MatrixWorld;
+        }
+        
         #region Implementation
 
-        private Vector initPosition;
+        
+        protected dynamic fBillboardMatrix;
+        protected Vector fGlobalDirection;
+        
+        protected Vector fInitPosition;
+        protected Vector fFinalPosition;
+        protected Vector fInitLookAt;
+        protected Vector fFinalLookAt;
 
-        private Vector finalPosition;
+        protected Vector fLookAtVelocity;
+        protected Vector fLookAtAcceleration;
+        
+        protected Vector fUp;
+        protected Vector fForward;
+        protected Vector fRight;
 
-        private Vector initLookAt;
-
-        private Vector finalLookAt;
-
-        private Vector lookAtVel;
-
-        private Vector lookAtAccel;
-
-        private void UpdateLookAt()
+        protected Vector fLocation;
+        protected Vector fLookAt;
+        protected Vector fVelocity;
+        protected Vector fAcceleration;
+        
+        protected const float PI = 3.14159265359f;
+        
+        protected float DEG2RAD(float a)
         {
-            var look = finalLookAt -lookAt;
-            lookAtVel = look * 0.5f;
+            return PI / 180 * (a);
         }
-
-        private void UpdateMoveTo()
+        
+        protected float RAD2DEG(float a)
         {
-            var pos = finalPosition - position;
-            velocity = pos * 0.5f;
+            return 180 / PI * (a);
         }
-
-        private float[] MakeLookAt(Vector cameraPosition, Vector target, Vector up)
+        
+        public bool Point(float XEye, float YEye, float ZEye, float XAt, float YAt, float ZAt)
         {
-            var zAxis = (cameraPosition - target);
-            zAxis.Normalize();
-            var xAxis = up ^ zAxis;
-            var yAxis = zAxis ^ xAxis;
+            float XRot, YRot, XDiff, YDiff, ZDiff;
 
-            return new[]
-                       {
-                           xAxis.X, xAxis.Y, xAxis.Z, 0, 
-                           yAxis.X, yAxis.Y, yAxis.Z, 0, 
-                           zAxis.X, zAxis.Y, zAxis.Z, 0,
-                           cameraPosition.X, 
-                           cameraPosition.Y, 
-                           cameraPosition.Z, 
-                           1
-                       };
+            // Calculate angles between points
+            XDiff = XAt - XEye;
+            YDiff = YAt - YEye;
+            ZDiff = ZAt - ZEye;
+            XRot = (float)Math.Atan2(-YDiff, Math.Sqrt(XDiff * XDiff + ZDiff * ZDiff));
+            YRot = (float)Math.Atan2(XDiff, ZDiff);
+
+            Location = new Vector(XEye, YEye, ZEye);
+            Rotation = new Vector(XRot, YRot, 0.0f);
+
+            return true;
         }
-
-        private float[] MakeInverse(float[] m) 
+        
+        public bool SetStartTrack()
         {
-        var m00 = m[0 * 4 + 0];
-        var m01 = m[0 * 4 + 1];
-        var m02 = m[0 * 4 + 2];
-        var m03 = m[0 * 4 + 3];
-        var m10 = m[1 * 4 + 0];
-        var m11 = m[1 * 4 + 1];
-        var m12 = m[1 * 4 + 2];
-        var m13 = m[1 * 4 + 3];
-        var m20 = m[2 * 4 + 0];
-        var m21 = m[2 * 4 + 1];
-        var m22 = m[2 * 4 + 2];
-        var m23 = m[2 * 4 + 3];
-        var m30 = m[3 * 4 + 0];
-        var m31 = m[3 * 4 + 1];
-        var m32 = m[3 * 4 + 2];
-        var m33 = m[3 * 4 + 3];
-        var tmp_0  = m22 * m33;
-        var tmp_1  = m32 * m23;
-        var tmp_2  = m12 * m33;
-        var tmp_3  = m32 * m13;
-        var tmp_4  = m12 * m23;
-        var tmp_5  = m22 * m13;
-        var tmp_6  = m02 * m33;
-        var tmp_7  = m32 * m03;
-        var tmp_8  = m02 * m23;
-        var tmp_9  = m22 * m03;
-        var tmp_10 = m02 * m13;
-        var tmp_11 = m12 * m03;
-        var tmp_12 = m20 * m31;
-        var tmp_13 = m30 * m21;
-        var tmp_14 = m10 * m31;
-        var tmp_15 = m30 * m11;
-        var tmp_16 = m10 * m21;
-        var tmp_17 = m20 * m11;
-        var tmp_18 = m00 * m31;
-        var tmp_19 = m30 * m01;
-        var tmp_20 = m00 * m21;
-        var tmp_21 = m20 * m01;
-        var tmp_22 = m00 * m11;
-        var tmp_23 = m10 * m01;
-
-        var t0 = (tmp_0 * m11 + tmp_3 * m21 + tmp_4 * m31) -
-            (tmp_1 * m11 + tmp_2 * m21 + tmp_5 * m31);
-        var t1 = (tmp_1 * m01 + tmp_6 * m21 + tmp_9 * m31) -
-            (tmp_0 * m01 + tmp_7 * m21 + tmp_8 * m31);
-        var t2 = (tmp_2 * m01 + tmp_7 * m11 + tmp_10 * m31) -
-            (tmp_3 * m01 + tmp_6 * m11 + tmp_11 * m31);
-        var t3 = (tmp_5 * m01 + tmp_8 * m11 + tmp_11 * m21) -
-            (tmp_4 * m01 + tmp_9 * m11 + tmp_10 * m21);
-
-        var d = 1.0f / (m00 * t0 + m10 * t1 + m20 * t2 + m30 * t3);
-
-            return new float[]
-                       {
-                           d * t0, d * t1, d * t2, d * t3,
-                           d * ((tmp_1 * m10 + tmp_2 * m20 + tmp_5 * m30) - (tmp_0 * m10 + tmp_3 * m20 + tmp_4 * m30)),
-                           d * ((tmp_0 * m00 + tmp_7 * m20 + tmp_8 * m30) - (tmp_1 * m00 + tmp_6 * m20 + tmp_9 * m30)),
-                           d * ((tmp_3 * m00 + tmp_6 * m10 + tmp_11 * m30) - (tmp_2 * m00 + tmp_7 * m10 + tmp_10 * m30)),
-                           d * ((tmp_4 * m00 + tmp_9 * m10 + tmp_10 * m20) - (tmp_5 * m00 + tmp_8 * m10 + tmp_11 * m20)),
-                           d
-                           * ((tmp_12 * m13 + tmp_15 * m23 + tmp_16 * m33) - (tmp_13 * m13 + tmp_14 * m23 + tmp_17 * m33))
-                           ,
-                           d
-                           * ((tmp_13 * m03 + tmp_18 * m23 + tmp_21 * m33) - (tmp_12 * m03 + tmp_19 * m23 + tmp_20 * m33))
-                           ,
-                           d
-                           * ((tmp_14 * m03 + tmp_19 * m13 + tmp_22 * m33) - (tmp_15 * m03 + tmp_18 * m13 + tmp_23 * m33))
-                           ,
-                           d
-                           * ((tmp_17 * m03 + tmp_20 * m13 + tmp_23 * m23) - (tmp_16 * m03 + tmp_21 * m13 + tmp_22 * m23))
-                           ,
-                           d
-                           * ((tmp_14 * m22 + tmp_17 * m32 + tmp_13 * m12) - (tmp_16 * m32 + tmp_12 * m12 + tmp_15 * m22))
-                           ,
-                           d
-                           * ((tmp_20 * m32 + tmp_12 * m02 + tmp_19 * m22) - (tmp_18 * m22 + tmp_21 * m32 + tmp_13 * m02))
-                           ,
-                           d
-                           * ((tmp_18 * m12 + tmp_23 * m32 + tmp_15 * m02) - (tmp_22 * m32 + tmp_14 * m02 + tmp_19 * m12))
-                           ,
-                           d
-                           * ((tmp_22 * m22 + tmp_16 * m02 + tmp_21 * m12) - (tmp_20 * m12 + tmp_23 * m22 + tmp_17 * m02))
-                       };
+            StartPos.X = Location.X;
+            StartPos.Y = Location.Y;
+            StartPos.Z = Location.Z;
+            StartRot.X = Rotation.X;
+            StartRot.Y = Rotation.Y;
+            StartRot.Z = Rotation.Z;
+            return true;
         }
+        
+        public bool SetEndTrack()
+        {
+            EndPos.X = Location.X;
+            EndPos.Y = Location.Y;
+            EndPos.Z = Location.Z;
+            EndRot.X = Rotation.X;
+            EndRot.Y = Rotation.Y;
+            EndRot.Z = Rotation.Z;
+            return true;
+        }
+        
+        //---------------------------------------------------------------
+        /// <summary>
+        /// Track uses the predefined Start and End Track Positions and Rotation and Positions the Camera
+        /// </summary>
+        /// <param name="Time">Percentage of Ellapsed Time</param>
+        /// <param name="Length">Total length of time in milliseconds</param>
+        /// <returns></returns>
+        //---------------------------------------------------------------
+        public bool Track(float Time, float Length)
+        {
+            float x, y, z;
+            float TimeOffset;
+
+            TimeOffset = Length * Time;
+
+            x = (EndPos.X - StartPos.X) / Length * TimeOffset;
+            y = (EndPos.Y - StartPos.Y) / Length * TimeOffset;
+            z = (EndPos.Z - StartPos.Z) / Length * TimeOffset;
+            Location = new Vector(StartPos.X + x, StartPos.Y + y, StartPos.Z + z);
+
+            x = (EndRot.X - StartRot.X) / Length * TimeOffset;
+            y = (EndRot.Y - StartRot.Y) / Length * TimeOffset;
+            z = (EndRot.Z - StartRot.Z) / Length * TimeOffset;
+            Rotation = new Vector(StartRot.X + x, StartRot.Y + y, StartRot.Z + z);
+
+            return true;
+        }
+        
+        public bool Update()
+        {
+            //var matrixLookAt = GLMatrix4.lookAt(Location, LookAt, fUp);
+
+            GLMatrix4.identity(MatrixTranslation);
+
+            GLMatrix4.identity(MatrixRotation);
+            GLMatrix4.translate(MatrixTranslation, (new Vector() - fLocation).ToFloatVector(), MatrixTranslation);
+            GLMatrix4.rotateX(MatrixRotation, Rotation.X, MatrixRotation);
+            GLMatrix4.rotateY(MatrixRotation, Rotation.Y, MatrixRotation);
+            GLMatrix4.rotateZ(MatrixRotation, Rotation.Z, MatrixRotation);
+
+            GLMatrix4.multiply(MatrixRotation, MatrixTranslation, Matrices.ModelView);
+            return true;
+        }
+        
+        public void Animate(float DeltaTime)
+        {
+            float CosineYaw = (float)Math.Cos(-Rotation.Y);
+            float SinYaw = (float)Math.Sin(-Rotation.Y);
+            float SinPitch = (float)Math.Sin(Rotation.X);
+
+            float Speed = Velocity.Z * DeltaTime;
+            float StrafeSpeed = Velocity.X * DeltaTime;
+
+            if (Speed > 15.0f)
+            {
+                Speed = 15.0f;
+            }
+            if (StrafeSpeed > 15.0f)
+            {
+                StrafeSpeed = 15.0f;
+            }
+            if (Speed < -15.0f)
+            {
+                Speed = -15.0f;
+            }
+            if (StrafeSpeed < -15.0f)
+            {
+                StrafeSpeed = -15.0f;
+            }
+
+            if (Velocity.Length() > 0.0)
+            {
+                fAcceleration = (Velocity * -1.5f);
+            }
+
+            fAcceleration.Y = -9.8f;
+            Velocity += fAcceleration * DeltaTime;
+
+            //fLocation.X += (float)(Math.Cos(Rotation.X + PI / 4)) * StrafeSpeed;
+            //fLocation.Z += (float)(Math.Sin(Rotation.X + PI / 4)) * StrafeSpeed;
+            var delta = new Vector();
+
+            delta.Y += Velocity.Y * DeltaTime;
+            delta.X += SinYaw * Speed;
+            delta.Z += CosineYaw * Speed;
+
+            fLocation += delta;
+
+            //fLookAt.X = Location.X + CosineYaw;
+            //fLookAt.Y = Location.Y + SinPitch;
+            //fLookAt.Z = Location.Z + SinYaw;
+        }
+        
+        private Stack<dynamic> fWorldMatrixStack;
+        
+        protected Stack<dynamic> WorldMatrixStack
+        {
+            get
+            {
+                if (fWorldMatrixStack == null)
+                {
+                    fWorldMatrixStack = new Stack<dynamic>();
+                }
+                return fWorldMatrixStack;
+            }
+        }
+        
+        public dynamic PushMatrixState()
+        {
+            var Result = Matrices.ModelView;
+            WorldMatrixStack.Push(Result);
+            return Result;
+        }
+        
+        public dynamic PopMatrixState()
+        {
+            var result = WorldMatrixStack.Pop();
+            SetWorldMatrix(result);
+            return result;
+        }
+        
+        public void SetWorldMatrix(dynamic WorldMatrix)
+        {
+            Matrices.ModelView = WorldMatrix;
+        }
+        
         #endregion
     }
 }
+
+

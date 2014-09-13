@@ -137,5 +137,10 @@
             var unitVector = this | 1;
             return (unitVector - normal * 2.0f * (unitVector % normal)) * this.Length();
         }
+
+        public float[] ToFloatVector()
+        {
+            return new[] { X, Y, Z };
+        }
     }
 }

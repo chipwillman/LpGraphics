@@ -6,6 +6,6 @@ contentManifest["Files/RiftGL.csproj"] = [
     ["File", "crate.fs", {"sizeBytes":307}],
     ["File", "crate.vs", {"sizeBytes":836}],
     ["File", "crate.png", {"sizeBytes":55013}],
-    ["File", "glMatrix-0.9.5.min.js", {"sizeBytes":12476}],
+    ["File", "glMatrix.js", {"sizeBytes":12476}],
     ["File", "webgl-utils.js", {"sizeBytes":5946}],
 ];

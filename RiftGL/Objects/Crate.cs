@@ -128,11 +128,9 @@
 
         protected override void OnDraw(Camera camera)
         {
-            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
-            ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
-            ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X), new[] { 1f, 0, 0 });
-            ViewPort.GLMatrix4.rotate(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y), new[] { 0, 1f, 0 });
-
+            ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
+            ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.rotateX(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X));
+            ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.rotateY(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y));
 
             camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, ViewPort.Buffers.VertexPositions);
             camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);

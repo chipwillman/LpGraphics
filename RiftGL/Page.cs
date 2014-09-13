@@ -50,6 +50,8 @@ namespace RiftGL
 
         public static World World;
 
+        public static Gui Gui;
+
         public static bool InitGL()
         {
             object gl = null;
@@ -64,10 +66,11 @@ namespace RiftGL
 
             if (Builtins.IsTruthy(gl))
             {
-                Camera = new Camera { GL = gl, position = new Vector(0, 0, -3) };
+                Camera = new Camera { GL = gl, Location = new Vector(0, 0, -3) };
                 ViewPort.Document = Document;
                 ViewPort.Canvas = Canvas;
                 World = new World(Camera);
+                Gui = new Gui();
                 Console.WriteLine("Initialized WebGL");
                 return true;
             }
@@ -117,6 +120,7 @@ namespace RiftGL
             OnPrepare();
 
             World.Prepare();
+            Gui.Prepare();
 
             Animate();
 
@@ -132,37 +136,50 @@ namespace RiftGL
             if (HeldKeys[33])
             {
                 // Page Up
-                Camera.velocity.Y += 0.2f;
+                Camera.Velocity.Y += 2f;
             }
 
             if (HeldKeys[34])
             {
                 // Page Down
-                Camera.velocity.Y += -0.2f;
+                Camera.Velocity.Y -= 2f;
             }
 
-            if (HeldKeys[37])
+            if (HeldKeys[37] || HeldKeys[65]) // Left cursor key or a
             {
-                // Left cursor key
-                Camera.velocity += new Vector(1.0f, 0, 0);
+                Camera.Yaw -= 2.5f;
+                // Camera.Velocity += new Vector(1f, 0, 0);
             }
 
-            if (HeldKeys[39])
+            if (HeldKeys[39] || HeldKeys[68])
             {
+                Camera.Yaw += 2.5f;
                 // Right cursor key
-                Camera.velocity += new Vector(-1.0f, 0, 0);
+                // Camera.Velocity += new Vector(1f, 0, 0);
             }
 
-            if (HeldKeys[38])
+            if (HeldKeys[38] || HeldKeys[87])
             {
                 // Up cursor key
-                Camera.velocity += new Vector(0, 0, 2f);
+                Camera.Velocity.Z += -2f;
             }
 
-            if (HeldKeys[40])
+            if (HeldKeys[40] || HeldKeys[83])
             {
                 // Down cursor key
-                Camera.velocity += new Vector(0, 0, -2f);
+                Camera.Velocity.Z += 2f;
+            }
+
+            if (HeldKeys[107])
+            {
+                mouseSensitivity += 0.05f;
+            }
+
+            if (HeldKeys[109])
+            {
+                mouseSensitivity -= 0.05f;
+                if (mouseSensitivity < 0.05f)
+                    mouseSensitivity = 0.05f;
             }
         }
 
@@ -180,6 +197,7 @@ namespace RiftGL
             {
                 Camera.DrawLighting();
             }
+            Gui.Draw(Camera);
         }
 
         public static void Animate()
@@ -187,11 +205,12 @@ namespace RiftGL
             var now = Environment.TickCount;
             if (LastTime != 0)
             {
-                var elapsed = now - LastTime;
+                var elapsed = (now - LastTime)/1000f;
                 if (elapsed > 0)
                 {
                     Camera.Animate(elapsed);
                     World.Animate(elapsed);
+                    Camera.Update();
                 }
             }
 
@@ -210,33 +229,31 @@ namespace RiftGL
 
         static float oldX;
         static float oldY;
-        static float yaw = 0.0f;
-        static float pitch = 0.0f;
 
-        private static int mouseSensitivity = 10;
+        private static float mouseSensitivity = 10;
 
         public static void OnMouseMove(dynamic e)
         {
-            var centerX = Camera.Canvas.width / 2;
-            var centerY = Camera.Canvas.height /2;
+            //var centerX = ViewPort.Canvas.width / 2;
+            //var centerY = ViewPort.Canvas.height / 2;
                
-	        float mX, mY;
+            //float mX, mY;
 
-	        mX = (float)e.x;
-	        mY = (float)e.y;
+            //mX = (float)e.x;
+            //mY = (float)e.y;
 
-	        if (mX < centerX/2)
-		        Camera.yaw -= 0.25f*mouseSensitivity;
-	        if (mX > centerX/2)
-		        Camera.yaw += 0.25f*mouseSensitivity;
+            //if (mX < centerX / 2)
+            //    Camera.Yaw -= 0.25f * mouseSensitivity;
+            //if (mX > centerX / 2)
+            //    Camera.Yaw += 0.25f * mouseSensitivity;
 
-	        if (mY < centerY/2)
-		        Camera.pitch += 0.25f*mouseSensitivity;
-	        if (mY > centerY/2)
-		        Camera.pitch -= 0.25f*mouseSensitivity;
+            //if (mY < centerY / 2)
+            //    Camera.Pitch += 0.25f * mouseSensitivity;
+            //if (mY > centerY / 2)
+            //    Camera.Pitch -= 0.25f * mouseSensitivity;
 
-	        oldX = mX;
-	        oldY = mY;            
+            //oldX = mX;
+            //oldY = mY;            
         }
 
         private static void OnPrepare()

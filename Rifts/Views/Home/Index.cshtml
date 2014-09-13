@@ -19,9 +19,21 @@
               }
             </style>
     
-            <a href="http://jsil.org/"><img src="http://jsil.org/images/jsil_48px.png" alt="JSIL" align="left" border="0"></a>
-            <a href="http://learningwebgl.com/blog/?p=684">Based on Lesson 7 from Learning WebGL</a><br>
-            <a href="Page.cs">View C# Source Code</a> | <a href="WebGL, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null.js">View Compiled JavaScript</a>
+            <h2>Camera:</h2>
+            <table style="border: 0; padding: 10px;">
+                <tr>
+                    <td><b>Location&nbsp;</b>
+                    <td>X: <input type="text" id="cameraLocationX" value="0">
+                    <td>Y: <input type="text" id="cameraLocationY" value="0">
+                    <td>Z: <input type="text" id="cameraLocationZ" value="0">
+                </tr>
+                <tr>
+                    <td><b>Roation&nbsp;</b>
+                    <td>X: <input type="text" id="cameraRotationX" value="0">
+                    <td>Y: <input type="text" id="cameraRotationY" value="0">
+                    <td>Z: <input type="text" id="cameraRotationZ" value="0">
+                </tr>
+            </table>
             <hr>
 
             <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
@@ -87,7 +99,7 @@
 </ol>
 
 
-    @Scripts.Render("Scripts/Files/glMatrix-0.9.5.min.js");
+    @Scripts.Render("Scripts/Files/glMatrix.js");
     @Scripts.Render("Scripts/Files/webgl-utils.js");
     @Scripts.Render("Scripts/startnetapp.js");
     @Scripts.Render("Scripts/Libraries/JSIL.js");
