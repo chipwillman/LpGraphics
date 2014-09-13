@@ -75,6 +75,9 @@
         
         public dynamic MatrixTranslation;
         public dynamic MatrixRotation;
+
+        public float RotationVelocity;
+        public float RotationAccelleration;
         
         public event EventHandler LookAtChanged;
         public Vector LookAt
@@ -323,47 +326,46 @@
             return true;
         }
         
-        public void Animate(float DeltaTime)
+        public void Animate(float deltaTime)
         {
-            float CosineYaw = (float)Math.Cos(-Rotation.Y);
-            float SinYaw = (float)Math.Sin(-Rotation.Y);
-            float SinPitch = (float)Math.Sin(Rotation.X);
+            float rotationSpeed = ClipSpeed(this.RotationVelocity * deltaTime, 25f);
+            if (Math.Abs(rotationSpeed) > 0.0001)
+            {
+                RotationAccelleration = RotationVelocity * -2.5f;
+                RotationVelocity += RotationAccelleration * deltaTime;
+                this.Yaw += rotationSpeed * deltaTime * 10;
+            }
+            else
+            {
+                RotationAccelleration = 0;
+                RotationVelocity = 0;
+            }
 
-            float Speed = Velocity.Z * DeltaTime;
-            float StrafeSpeed = Velocity.X * DeltaTime;
 
-            if (Speed > 15.0f)
-            {
-                Speed = 15.0f;
-            }
-            if (StrafeSpeed > 15.0f)
-            {
-                StrafeSpeed = 15.0f;
-            }
-            if (Speed < -15.0f)
-            {
-                Speed = -15.0f;
-            }
-            if (StrafeSpeed < -15.0f)
-            {
-                StrafeSpeed = -15.0f;
-            }
+            float cosineYaw = (float)Math.Cos(-this.Rotation.Y);
+            float sinYaw = (float)Math.Sin(-this.Rotation.Y);
+            float sinPitch = (float)Math.Sin(this.Rotation.X);
+
+            float speed = ClipSpeed(this.Velocity.Z * deltaTime, 15f);
+            float strafeSpeed = ClipSpeed(this.Velocity.X * deltaTime, 15f);
 
             if (Velocity.Length() > 0.0)
             {
                 fAcceleration = (Velocity * -1.5f);
             }
-
+            else
+            {
+                fAcceleration = new Vector();
+                Velocity = new Vector();
+            }
             fAcceleration.Y = -9.8f;
-            Velocity += fAcceleration * DeltaTime;
+            Velocity += fAcceleration * deltaTime;
 
-            //fLocation.X += (float)(Math.Cos(Rotation.X + PI / 4)) * StrafeSpeed;
-            //fLocation.Z += (float)(Math.Sin(Rotation.X + PI / 4)) * StrafeSpeed;
             var delta = new Vector();
 
-            delta.Y += Velocity.Y * DeltaTime;
-            delta.X += SinYaw * Speed;
-            delta.Z += CosineYaw * Speed;
+            delta.Y += Velocity.Y * deltaTime;
+            delta.X += sinYaw * speed + (float)(Math.Sin(-this.Rotation.Y + PI / 2)) * strafeSpeed;
+            delta.Z += cosineYaw * speed + (float)(Math.Cos(-this.Rotation.Y + PI / 2)) * strafeSpeed;
 
             fLocation += delta;
 
@@ -371,7 +373,20 @@
             //fLookAt.Y = Location.Y + SinPitch;
             //fLookAt.Z = Location.Z + SinYaw;
         }
-        
+
+        private static float ClipSpeed(float value, float maximum)
+        {
+            if (value > maximum)
+            {
+                value = maximum;
+            }
+            if (value < -maximum)
+            {
+                value = -maximum;
+            }
+            return value;
+        }
+
         private Stack<dynamic> fWorldMatrixStack;
         
         protected Stack<dynamic> WorldMatrixStack

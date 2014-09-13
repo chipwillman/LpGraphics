@@ -9,7 +9,7 @@
             var width = 32;
             this.Camera = camera;
             this.Terrain = new Terrain { Position = new Vector(0, 0, -10) };
-            this.Crate = new Crate { Position = new Vector(0, 0, -20)};
+            this.Crate = new Crate { Position = new Vector(0, 0, 3), Size = 4};
             this.Crate.InitTexture(camera);
             this.Crate.InitShaders(camera);
 
@@ -56,6 +56,12 @@
             if (Camera.Location.Y < terrainHeight + Player.Size)
             {
                 Camera.Location.Y = terrainHeight + Player.Size;
+            }
+
+            terrainHeight = Terrain.GetHeight(Crate.Position.X, Crate.Position.Z);
+            if (Crate.Position.Y < terrainHeight + Crate.Size)
+            {
+                Crate.Position.Y = terrainHeight + Crate.Size;
             }
 
             //if (Camera.position.X <= Terrain.GetScanDepth())

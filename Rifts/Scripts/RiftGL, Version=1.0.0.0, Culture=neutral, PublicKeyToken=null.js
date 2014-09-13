@@ -301,40 +301,54 @@ JSIL.DeclareNamespace("RiftGL.View");
     } while (eventHandler !== eventHandler2);
   };
 
-  function Camera_Animate (DeltaTime) {
-    var CosineYaw = Math.fround(Math.cos(-this.get_Rotation().Y));
-    var SinYaw = Math.fround(Math.sin(-this.get_Rotation().Y));
-    var SinPitch = Math.fround(Math.sin(this.get_Rotation().X));
-    var Speed = +this.get_Velocity().Z * +DeltaTime;
-    var StrafeSpeed = +this.get_Velocity().X * +DeltaTime;
-    if (Speed > 15) {
-      Speed = 15;
+  function Camera_Animate (deltaTime) {
+    var $temp00;
+    var rotationSpeed = +$thisType.ClipSpeed(+this.RotationVelocity * +deltaTime, 25);
+    if ((Math.abs(rotationSpeed)) > 0.0001) {
+      this.RotationAccelleration = +this.RotationVelocity * -2.5;
+      this.RotationVelocity += +this.RotationAccelleration * +deltaTime;
+      ($temp00 = +this.get_Yaw() + ((rotationSpeed * +deltaTime) * 10), 
+        this.set_Yaw($temp00), 
+        $temp00);
+    } else {
+      this.RotationAccelleration = 0;
+      this.RotationVelocity = 0;
     }
-    if (StrafeSpeed > 15) {
-      StrafeSpeed = 15;
-    }
-    if (Speed < -15) {
-      Speed = -15;
-    }
-    if (StrafeSpeed < -15) {
-    }
+    var cosineYaw = Math.fround(Math.cos(-this.get_Rotation().Y));
+    var sinYaw = Math.fround(Math.sin(-this.get_Rotation().Y));
+    var sinPitch = Math.fround(Math.sin(this.get_Rotation().X));
+    var speed = +$thisType.ClipSpeed(+this.get_Velocity().Z * +deltaTime, 15);
+    var strafeSpeed = +$thisType.ClipSpeed(+this.get_Velocity().X * +deltaTime, 15);
     if (+(this.get_Velocity()).Length() > 0) {
       this.fAcceleration = $S02().CallStatic($T01(), "op_Multiply", null, this.get_Velocity(), -1.5);
+    } else {
+      this.fAcceleration = $S00().Construct();
+      this.set_Velocity($S00().Construct());
     }
     this.fAcceleration.Y = -9.8;
     this.set_Velocity($T01().op_Addition(
         this.get_Velocity(), 
-        $S02().CallStatic($T01(), "op_Multiply", null, this.fAcceleration, DeltaTime)
+        $S02().CallStatic($T01(), "op_Multiply", null, this.fAcceleration, deltaTime)
       ));
     var delta = $S00().Construct();
-    delta.Y += +this.get_Velocity().Y * +DeltaTime;
-    delta.X += SinYaw * Speed;
-    delta.Z += CosineYaw * Speed;
+    delta.Y += +this.get_Velocity().Y * +deltaTime;
+    delta.X += (sinYaw * speed) + (Math.fround(Math.sin((-this.get_Rotation().Y + 1.57079637))) * strafeSpeed);
+    delta.Z += (cosineYaw * speed) + (Math.fround(Math.cos((-this.get_Rotation().Y + 1.57079637))) * strafeSpeed);
     this.fLocation = $T01().op_Addition(this.fLocation, delta);
   };
 
   function Camera_Center () {
     this.fRotation.Y = 0;
+  };
+
+  function Camera_ClipSpeed (value, maximum) {
+    if (+value > +maximum) {
+      value = +maximum;
+    }
+    if (+value < -maximum) {
+      value = -maximum;
+    }
+    return value;
   };
 
   function Camera_DEG2RAD (a) {
@@ -637,6 +651,11 @@ JSIL.DeclareNamespace("RiftGL.View");
       Camera_Center
     );
 
+    $.Method({Static:true , Public:false}, "ClipSpeed", 
+      new JSIL.MethodSignature($.Single, [$.Single, $.Single]), 
+      Camera_ClipSpeed
+    );
+
     $.Method({Static:false, Public:false}, "DEG2RAD", 
       new JSIL.MethodSignature($.Single, [$.Single]), 
       Camera_DEG2RAD
@@ -857,6 +876,8 @@ JSIL.DeclareNamespace("RiftGL.View");
       .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
     $.Field({Static:false, Public:true }, "MatrixRotation", $.Object)
       .Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute")); 
+    $.Field({Static:false, Public:true }, "RotationVelocity", $.Single); 
+    $.Field({Static:false, Public:true }, "RotationAccelleration", $.Single); 
     $.Field({Static:false, Public:false}, "LookAtChanged", $asm01.TypeRef("System.EventHandler")); 
     $.Field({Static:false, Public:false}, "VelocityChanged", $asm01.TypeRef("System.EventHandler")); 
     $.Field({Static:false, Public:false}, "fRotation", $asm02.TypeRef("RiftGL.Objects.Vector")); 
@@ -1990,6 +2011,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     $T02().Document.getElementById("cameraRotationX").value = +camera.get_Rotation().X;
     $T02().Document.getElementById("cameraRotationY").value = +camera.get_Rotation().Y;
     $T02().Document.getElementById("cameraRotationZ").value = +camera.get_Rotation().Z;
+    $T02().Document.getElementById("cameraRotationSpeed").value = +camera.RotationVelocity;
   };
 
   function Gui_set_CurrentTime (value) {
@@ -2381,9 +2403,10 @@ JSIL.DeclareNamespace("RiftGL.View");
       for (var j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
         var scaleR = +((+j / (+(this.Terrain$Width$value) - 1)));
         var scaleC = +((+i / (+(this.Terrain$Width$value) - 1)));
+        var x = -32 + (scaleR * 64);
         var y = +this.Terrain$HeightMap$value.HeightMap$Values$value[((Math.imul(i, this.Terrain$Width$value) + j) | 0)] * +this.Terrain$heightMul$value;
         var z = -32 + (scaleC * 64);
-        vertexBuffer.Add($S03().Construct((-32 + (scaleR * 64)), y, z));
+        vertexBuffer.Add($S03().Construct(x, y, z));
         var u = textureU * scaleR;
         var v = textureV * scaleC;
         textureBuffer.Add($S03().Construct(u, v, 0));
@@ -3484,7 +3507,8 @@ JSIL.DeclareNamespace("RiftGL.View");
         Position: $S00().Construct(0, 0, -10)}
     );
     this.World$Crate$value = (new ($T03())()).__Initialize__({
-        Position: $S00().Construct(0, 0, -20)}
+        Position: $S00().Construct(0, 0, 3), 
+        Size: 4}
     );
     (this.World$Crate$value).InitTexture(camera);
     (this.World$Crate$value).InitShaders(camera);
@@ -3508,6 +3532,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     );
     if (+(this.World$Camera$value).get_Location().Y < (terrainHeight + +this.World$Player$value.GlObject$Size$value)) {
       this.World$Camera$value.Location.Y = terrainHeight + +this.World$Player$value.GlObject$Size$value;
+    }
+    terrainHeight = +(this.World$Terrain$value).GetHeight(this.World$Crate$value.GlObject$Position$value.X, this.World$Crate$value.GlObject$Position$value.Z);
+    if (+this.World$Crate$value.GlObject$Position$value.Y < (terrainHeight + +this.World$Crate$value.GlObject$Size$value)) {
+      this.World$Crate$value.GlObject$Position$value.Y = terrainHeight + +this.World$Crate$value.GlObject$Size$value;
     }
     (this.World$Terrain$value).Animate(deltaTime);
     this.World$Gui$value.Gui$CurrentTime$value = +this.World$timeStart$value - +this.World$timeElapsed$value;
@@ -3912,7 +3940,6 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Page_HandleKeys () {
-    var $temp00, $temp01;
     if ($thisType.HeldKeys[33]) {
       $thisType.Camera.Velocity.Y += 2;
     }
@@ -3920,20 +3947,22 @@ JSIL.DeclareNamespace("RiftGL.View");
       $thisType.Camera.Velocity.Y -= 2;
     }
     if (!(!$thisType.HeldKeys[37] && !$thisType.HeldKeys[65])) {
-      ($temp00 = +$thisType.Camera.get_Yaw() - 2.5, 
-        $thisType.Camera.set_Yaw($temp00), 
-        $temp00);
+      $thisType.Camera.RotationVelocity -= 50;
     }
     if (!(!$thisType.HeldKeys[39] && !$thisType.HeldKeys[68])) {
-      ($temp01 = +$thisType.Camera.get_Yaw() + 2.5, 
-        $thisType.Camera.set_Yaw($temp01), 
-        $temp01);
+      $thisType.Camera.RotationVelocity += 50;
     }
     if (!(!$thisType.HeldKeys[38] && !$thisType.HeldKeys[87])) {
       $thisType.Camera.Velocity.Z += -2;
     }
     if (!(!$thisType.HeldKeys[40] && !$thisType.HeldKeys[83])) {
       $thisType.Camera.Velocity.Z += 2;
+    }
+    if ($thisType.HeldKeys[81]) {
+      $thisType.Camera.Velocity.X += -1;
+    }
+    if ($thisType.HeldKeys[69]) {
+      $thisType.Camera.Velocity.X += 1;
     }
     if ($thisType.HeldKeys[107]) {
       $thisType.mouseSensitivity += 0.05;

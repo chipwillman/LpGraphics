@@ -147,13 +147,13 @@ namespace RiftGL
 
             if (HeldKeys[37] || HeldKeys[65]) // Left cursor key or a
             {
-                Camera.Yaw -= 2.5f;
+                Camera.RotationVelocity -= 50f;
                 // Camera.Velocity += new Vector(1f, 0, 0);
             }
 
             if (HeldKeys[39] || HeldKeys[68])
             {
-                Camera.Yaw += 2.5f;
+                Camera.RotationVelocity += 50f;
                 // Right cursor key
                 // Camera.Velocity += new Vector(1f, 0, 0);
             }
@@ -168,6 +168,18 @@ namespace RiftGL
             {
                 // Down cursor key
                 Camera.Velocity.Z += 2f;
+            }
+
+            if (HeldKeys[81])
+            {
+                // Up cursor key
+                Camera.Velocity.X += -1f;
+            }
+
+            if (HeldKeys[69])
+            {
+                // Down cursor key
+                Camera.Velocity.X += 1f;
             }
 
             if (HeldKeys[107])

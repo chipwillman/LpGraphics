@@ -17,6 +17,8 @@
             ViewPort.Document.getElementById("cameraRotationX").value = camera.Rotation.X;
             ViewPort.Document.getElementById("cameraRotationY").value = camera.Rotation.Y;
             ViewPort.Document.getElementById("cameraRotationZ").value = camera.Rotation.Z;
+
+            ViewPort.Document.getElementById("cameraRotationSpeed").value = camera.RotationVelocity;
         }
     }
 }

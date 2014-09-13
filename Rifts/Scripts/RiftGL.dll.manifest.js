@@ -17,7 +17,7 @@ if (typeof (contentManifest) !== "object") { JSIL.GlobalNamespace.contentManifes
 contentManifest["RiftGL.dll"] = [
     ["Script", "System.Dynamic, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a.js", { "sizeBytes": 213270 }],
     ["Script", "System.Numerics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.js", { "sizeBytes": 87784 }],
-    ["Script", "RiftGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null.js", { "sizeBytes": 158593 }],
+    ["Script", "RiftGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null.js", { "sizeBytes": 160283 }],
     ["Script", "System.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a.js", { "sizeBytes": 668973 }],
     ["Script", "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a.js", { "sizeBytes": 906441 }],
     ["Script", "System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089.js", { "sizeBytes": 3042043 }],
