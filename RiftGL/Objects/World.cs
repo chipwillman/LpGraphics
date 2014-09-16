@@ -1,5 +1,7 @@
 ﻿namespace RiftGL.Objects
 {
+    using System;
+
     using RiftGL.View;
 
     public class World
@@ -8,8 +10,8 @@
         {
             var width = 32;
             this.Camera = camera;
-            this.Terrain = new Terrain { Position = new Vector(0, 0, -10) };
-            this.Crate = new Crate { Position = new Vector(0, 0, 3), Size = 4};
+            this.Terrain = new Terrain { Position = new Vector(-width/2f, 0, -width/2f) };
+            this.Crate = new Crate { Position = new Vector(0, 0, 3), Size = 1};
             this.Crate.InitTexture(camera);
             this.Crate.InitShaders(camera);
 
@@ -41,8 +43,7 @@
 
         public Gui Gui { get; set; }
 
-        // public OgroEnemy OrgoEnemy { get; set;
-        // public SodEnemy SodEnemy { get; set;
+        public int MapRequestSent;
 
         public float timeStart { get; set; }
 
@@ -57,6 +58,7 @@
             {
                 Camera.Location.Y = terrainHeight + Player.Size;
             }
+            Player.Position = Camera.Location;
 
             terrainHeight = Terrain.GetHeight(Crate.Position.X, Crate.Position.Z);
             if (Crate.Position.Y < terrainHeight + Crate.Size)
@@ -64,26 +66,7 @@
                 Crate.Position.Y = terrainHeight + Crate.Size;
             }
 
-            //if (Camera.position.X <= Terrain.GetScanDepth())
-            //{
-            //    Camera.position.X = Terrain.GetScanDepth();
-            //}
-
-            //if (Camera.position.X >= Terrain.GetWidth() * Terrain.GetMul() - Terrain.GetScanDepth())
-            //{
-            //    Camera.position.X = Terrain.GetWidth() * Terrain.GetMul() - Terrain.GetScanDepth();
-            //}
-
-            //if (Camera.position.Z <= Terrain.GetScanDepth())
-            //{
-            //    Camera.position.Z = Terrain.GetScanDepth();
-            //}
-
-            //if (Camera.position.Z >= Terrain.GetWidth() * Terrain.GetMul() - Terrain.GetScanDepth())
-            //{
-            //    Camera.position.Z = Terrain.GetWidth() * Terrain.GetMul() - Terrain.GetScanDepth();
-            //}
-
+            //Terrain.EnsurePlayerMap(Player);
 
             Terrain.Animate(deltaTime);
 
@@ -99,15 +82,30 @@
         {
             //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
             ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, ViewPort.Matrices.ModelView, new[] { camera.Location.X, camera.Location.Y, camera.Location.Z });
-            
+
             Terrain.Draw(camera);
             Crate.Draw(camera);
             //Gui.Draw();
         }
 
-        public void LoadWorld()
+        public void LoadWorld(dynamic worldMap, Camera camera)
         {
-            
+            Terrain.InitBuffers(camera);
+        }
+
+        public void Prepare()
+        {
+            Camera.GL.clearColor(Terrain.fogColor[0], Terrain.fogColor[1], Terrain.fogColor[2], Terrain.fogColor[3]);
+            var terrain2D = new Vector(Terrain.Position.X, 0, Terrain.Position.Z);
+            var camera2D = new Vector(Camera.Location.X, 0, Camera.Location.Z);
+
+            if (Math.Abs((terrain2D - camera2D).Length()) > Terrain.Width / 4f)
+            {
+                RequestMapUpdate();
+            }
+
+            Terrain.Prepare();
+            Crate.Prepare();
         }
 
         public void UnloadWorld()
@@ -123,12 +121,15 @@
 
         private bool gameDone;
 
-        public void Prepare()
+        private void RequestMapUpdate()
         {
-            //glClearColor(terrain->fogColor[0], terrain->fogColor[1], terrain->fogColor[2], terrain->fogColor[3]);
-	
-            Terrain.Prepare();
-            Crate.Prepare();
+            var now = Environment.TickCount;
+            if ((now - MapRequestSent) > 15000)
+            {
+                MapRequestSent = Environment.TickCount;
+                var repository = new RiftRepository("lpmud.local", "user", "password");
+                repository.LoadMap(Camera.Location, 128f, Page.LoadWorldCallback);
+            }
         }
 
         #endregion

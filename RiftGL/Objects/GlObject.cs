@@ -1,5 +1,6 @@
 ﻿namespace RiftGL.Objects
 {
+    using System;
     using System.Collections.Generic;
 
     using RiftGL.View;
@@ -32,10 +33,20 @@
 
         public void Draw(Camera camera)
         {
-            glViewMatrix.Push(ViewPort.Matrices.ModelView);
-
+            this.PushMatrix();
             this.OnDraw(camera);
+            this.PopMatrix();
+        }
 
+        public void PushMatrix()
+        {
+            var modelView = new float[16];
+            Array.Copy(ViewPort.Matrices.ModelView, modelView, modelView.Length);
+            glViewMatrix.Push(modelView);
+        }
+
+        public void PopMatrix()
+        {
             ViewPort.Matrices.ModelView = glViewMatrix.Pop();
         }
 

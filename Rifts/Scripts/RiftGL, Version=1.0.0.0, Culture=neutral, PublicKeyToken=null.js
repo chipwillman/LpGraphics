@@ -2,6 +2,102 @@
 var $asm02 = JSIL.DeclareAssembly("RiftGL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
 JSIL.DeclareNamespace("RiftGL");
+JSIL.DeclareNamespace("RiftGL.Extensions");
+/* class RiftGL.Extensions.JsonExtention */ 
+
+(function JsonExtention$Members () {
+  var $, $thisType;
+  var $T00 = function () {
+    return ($T00 = JSIL.Memoize($asm01.System.Type)) ();
+  };
+  var $T01 = function () {
+    return ($T01 = JSIL.Memoize($asm01.System.String)) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm08.System.Runtime.Serialization.Json.DataContractJsonSerializer)) ();
+  };
+  var $T03 = function () {
+    return ($T03 = JSIL.Memoize($asm01.System.IO.MemoryStream)) ();
+  };
+  var $T04 = function () {
+    return ($T04 = JSIL.Memoize($asm01.System.Text.Encoding)) ();
+  };
+  var $T05 = function () {
+    return ($T05 = JSIL.Memoize($asm08.System.Runtime.Serialization.XmlObjectSerializer)) ();
+  };
+  var $T06 = function () {
+    return ($T06 = JSIL.Memoize($asm01.System.IDisposable)) ();
+  };
+  var $S00 = function () {
+    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm08.TypeRef("System.Runtime.Serialization.Json.DataContractJsonSerializer"), [$asm01.TypeRef("System.Type")]))) ();
+  };
+  var $S01 = function () {
+    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.IO.MemoryStream"), [$jsilcore.TypeRef("System.Array", [$asm01.TypeRef("System.Byte")])]))) ();
+  };
+  var $S02 = function () {
+    return ($S02 = JSIL.Memoize(new JSIL.MethodSignature($jsilcore.TypeRef("System.Array", [$asm01.TypeRef("System.Byte")]), [$asm01.TypeRef("System.String")]))) ();
+  };
+  var $S03 = function () {
+    return ($S03 = JSIL.Memoize(new JSIL.MethodSignature($asm01.TypeRef("System.Object"), [$asm01.TypeRef("System.IO.Stream")]))) ();
+  };
+  var $S04 = function () {
+    return ($S04 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.IO.MemoryStream"), null))) ();
+  };
+  var $S05 = function () {
+    return ($S05 = JSIL.Memoize(new JSIL.MethodSignature(null, [$asm01.TypeRef("System.IO.Stream"), $asm01.TypeRef("System.Object")]))) ();
+  };
+  var $IM00 = function () {
+    return ($IM00 = JSIL.Memoize($asm01.System.IDisposable.Dispose)) ();
+  };
+
+  function JsonExtention_FromJson$b1 (T, json) {
+    var serializer = $S00().Construct(T);
+    var tempStream = $S01().Construct($S02().CallVirtual("GetBytes", null, $T04().get_Unicode(), json));
+    try {
+      var result = JSIL.CloneParameter(T, T.$Cast($S03().CallVirtual("ReadObject", null, serializer, tempStream)));
+    } finally {
+      if (tempStream !== null) {
+        $IM00().Call(tempStream, null);
+      }
+    }
+    return result;
+  };
+
+  function JsonExtention_ToJson$b1 (T, parent) {
+    var serializer = $S00().Construct(T);
+    var tempStream = $S04().Construct();
+    try {
+      $S05().CallVirtual("WriteObject", null, serializer, tempStream, parent);
+      var string = $T04().get_Default().GetString(tempStream.ToArray());
+    } finally {
+      if (tempStream !== null) {
+        $IM00().Call(tempStream, null);
+      }
+    }
+    return string;
+  };
+
+  JSIL.MakeStaticClass("RiftGL.Extensions.JsonExtention", true, [], function ($interfaceBuilder) {
+    $ = $interfaceBuilder;
+
+    $.Method({Static:true , Public:true }, "FromJson", 
+      new JSIL.MethodSignature("!!0", [$.String], ["T"]), 
+      JsonExtention_FromJson$b1
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.ExtensionAttribute"));
+
+    $.Method({Static:true , Public:true }, "ToJson", 
+      new JSIL.MethodSignature($.String, ["!!0"], ["T"]), 
+      JsonExtention_ToJson$b1
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.ExtensionAttribute"));
+
+    return function (newThisType) { $thisType = newThisType; }; 
+  })
+    .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.ExtensionAttribute"));
+
+})();
+
 JSIL.DeclareNamespace("RiftGL.Objects");
 /* class RiftGL.Objects.Audio */ 
 
@@ -1370,6 +1466,12 @@ JSIL.DeclareNamespace("RiftGL.View");
   var $T05 = function () {
     return ($T05 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
+  var $T06 = function () {
+    return ($T06 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+  };
+  var $T07 = function () {
+    return ($T07 = JSIL.Memoize($asm01.System.Array)) ();
+  };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm03.TypeRef("System.Collections.Generic.Stack`1", [$jsilcore.TypeRef("System.Array", [$asm01.TypeRef("System.Single")])]), null))) ();
   };
@@ -1378,6 +1480,12 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
   var $S02 = function () {
     return ($S02 = JSIL.Memoize(new JSIL.MethodSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [$asm02.TypeRef("RiftGL.Objects.Vector"), $asm01.TypeRef("System.Single")]))) ();
+  };
+  var $S03 = function () {
+    return ($S03 = JSIL.Memoize(new JSIL.MethodSignature(null, [
+        $asm01.TypeRef("System.Array"), $asm01.TypeRef("System.Array"), 
+        $asm01.TypeRef("System.Int32")
+      ]))) ();
   };
 
   function GlObject__ctor$00 () {
@@ -1407,9 +1515,9 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function GlObject_Draw (camera) {
-    $T00().prototype.Push.call(this.glViewMatrix, $T05().Matrices.ModelView);
+    this.PushMatrix();
     this.OnDraw(camera);
-    $T05().Matrices.ModelView = $T00().prototype.Pop.call(this.glViewMatrix);
+    this.PopMatrix();
   };
 
   function GlObject_FindRoot () {
@@ -1455,6 +1563,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     this.ProcessCollisions(this.FindRoot());
   };
 
+  function GlObject_PopMatrix () {
+    $T05().Matrices.ModelView = $T00().prototype.Pop.call(this.glViewMatrix);
+  };
+
   function GlObject_Prepare () {
     this.OnPrepare();
     if (this.get_HasChild()) {
@@ -1481,6 +1593,12 @@ JSIL.DeclareNamespace("RiftGL.View");
     if (!(!obj.get_HasParent() || obj.IsLastChild())) {
       this.ProcessCollisions($thisType.$Cast(obj.Inventory$Next$value));
     }
+  };
+
+  function GlObject_PushMatrix () {
+    var modelView = JSIL.Array.New($T03(), 16);
+    $S03().CallStatic($T07(), "Copy", null, $T05().Matrices.ModelView, modelView, modelView.length);
+    $T00().prototype.Push.call(this.glViewMatrix, modelView);
   };
 
   function GlObject_set_Acceleration (value) {
@@ -1585,6 +1703,11 @@ JSIL.DeclareNamespace("RiftGL.View");
       GlObject_OnPrepare
     );
 
+    $.Method({Static:false, Public:true }, "PopMatrix", 
+      JSIL.MethodSignature.Void, 
+      GlObject_PopMatrix
+    );
+
     $.Method({Static:false, Public:true }, "Prepare", 
       JSIL.MethodSignature.Void, 
       GlObject_Prepare
@@ -1593,6 +1716,11 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Method({Static:false, Public:true }, "ProcessCollisions", 
       JSIL.MethodSignature.Action($.Type), 
       GlObject_ProcessCollisions
+    );
+
+    $.Method({Static:false, Public:true }, "PushMatrix", 
+      JSIL.MethodSignature.Void, 
+      GlObject_PushMatrix
     );
 
     $.Method({Static:false, Public:true }, "set_Acceleration", 
@@ -2078,6 +2206,327 @@ JSIL.DeclareNamespace("RiftGL.View");
 
 })();
 
+/* class RiftGL.Objects.Map */ 
+
+(function Map$Members () {
+  var $, $thisType;
+  var $T00 = function () {
+    return ($T00 = JSIL.Memoize($asm01.System.Int32)) ();
+  };
+  var $T01 = function () {
+    return ($T01 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm01.System.Single)) ();
+  };
+
+  function Map__ctor () {
+  };
+
+  function Map_get_Columns () {
+    return this.Map$Columns$value;
+  };
+
+  function Map_get_HeightMap () {
+    return this.Map$HeightMap$value;
+  };
+
+  function Map_get_Rows () {
+    return this.Map$Rows$value;
+  };
+
+  function Map_get_SizeX () {
+    return this.Map$SizeX$value;
+  };
+
+  function Map_get_SizeZ () {
+    return this.Map$SizeZ$value;
+  };
+
+  function Map_get_X () {
+    return this.Map$X$value;
+  };
+
+  function Map_get_Z () {
+    return this.Map$Z$value;
+  };
+
+  function Map_set_Columns (value) {
+    this.Map$Columns$value = (value | 0);
+  };
+
+  function Map_set_HeightMap (value) {
+    this.Map$HeightMap$value = value;
+  };
+
+  function Map_set_Rows (value) {
+    this.Map$Rows$value = (value | 0);
+  };
+
+  function Map_set_SizeX (value) {
+    this.Map$SizeX$value = +value;
+  };
+
+  function Map_set_SizeZ (value) {
+    this.Map$SizeZ$value = +value;
+  };
+
+  function Map_set_X (value) {
+    this.Map$X$value = +value;
+  };
+
+  function Map_set_Z (value) {
+    this.Map$Z$value = +value;
+  };
+
+  JSIL.MakeType({
+      BaseType: $asm01.TypeRef("System.Object"), 
+      Name: "RiftGL.Objects.Map", 
+      IsPublic: true, 
+      IsReferenceType: true, 
+      MaximumConstructorArguments: 0, 
+    }, function ($interfaceBuilder) {
+    $ = $interfaceBuilder;
+
+    $.Method({Static:false, Public:true }, ".ctor", 
+      JSIL.MethodSignature.Void, 
+      Map__ctor
+    );
+
+    $.Method({Static:false, Public:true }, "get_Columns", 
+      JSIL.MethodSignature.Return($.Int32), 
+      Map_get_Columns
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_HeightMap", 
+      JSIL.MethodSignature.Return($jsilcore.TypeRef("System.Array", [$.Single])), 
+      Map_get_HeightMap
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Rows", 
+      JSIL.MethodSignature.Return($.Int32), 
+      Map_get_Rows
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_SizeX", 
+      JSIL.MethodSignature.Return($.Single), 
+      Map_get_SizeX
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_SizeZ", 
+      JSIL.MethodSignature.Return($.Single), 
+      Map_get_SizeZ
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_X", 
+      JSIL.MethodSignature.Return($.Single), 
+      Map_get_X
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Z", 
+      JSIL.MethodSignature.Return($.Single), 
+      Map_get_Z
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Columns", 
+      JSIL.MethodSignature.Action($.Int32), 
+      Map_set_Columns
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_HeightMap", 
+      JSIL.MethodSignature.Action($jsilcore.TypeRef("System.Array", [$.Single])), 
+      Map_set_HeightMap
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Rows", 
+      JSIL.MethodSignature.Action($.Int32), 
+      Map_set_Rows
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_SizeX", 
+      JSIL.MethodSignature.Action($.Single), 
+      Map_set_SizeX
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_SizeZ", 
+      JSIL.MethodSignature.Action($.Single), 
+      Map_set_SizeZ
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_X", 
+      JSIL.MethodSignature.Action($.Single), 
+      Map_set_X
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Z", 
+      JSIL.MethodSignature.Action($.Single), 
+      Map_set_Z
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Field({Static:false, Public:false}, "Map$X$value", $.Single)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$Z$value", $.Single)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$SizeX$value", $.Single)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$SizeZ$value", $.Single)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$Rows$value", $.Int32)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$Columns$value", $.Int32)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "Map$HeightMap$value", $jsilcore.TypeRef("System.Array", [$.Single]))
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Property({Static:false, Public:true }, "X", $.Single);
+
+    $.Property({Static:false, Public:true }, "Z", $.Single);
+
+    $.Property({Static:false, Public:true }, "SizeX", $.Single);
+
+    $.Property({Static:false, Public:true }, "SizeZ", $.Single);
+
+    $.Property({Static:false, Public:true }, "Rows", $.Int32);
+
+    $.Property({Static:false, Public:true }, "Columns", $.Int32);
+
+    $.Property({Static:false, Public:true }, "HeightMap", $jsilcore.TypeRef("System.Array", [$.Single]));
+
+    return function (newThisType) { $thisType = newThisType; }; 
+  });
+
+})();
+
+/* class RiftGL.Objects.ModelUpdate */ 
+
+(function ModelUpdate$Members () {
+  var $, $thisType;
+  var $T00 = function () {
+    return ($T00 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
+  };
+  var $T01 = function () {
+    return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.ModelUpdate_UpdateType)) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm02.RiftGL.Objects.Map)) ();
+  };
+
+  function ModelUpdate__ctor () {
+  };
+
+  function ModelUpdate_get_Model () {
+    return this.ModelUpdate$Model$value;
+  };
+
+  function ModelUpdate_get_Type () {
+    return this.ModelUpdate$Type$value;
+  };
+
+  function ModelUpdate_get_World () {
+    return this.ModelUpdate$World$value;
+  };
+
+  function ModelUpdate_set_Model (value) {
+    this.ModelUpdate$Model$value = value;
+  };
+
+  function ModelUpdate_set_Type (value) {
+    this.ModelUpdate$Type$value = value;
+  };
+
+  function ModelUpdate_set_World (value) {
+    this.ModelUpdate$World$value = value;
+  };
+
+  JSIL.MakeType({
+      BaseType: $asm01.TypeRef("System.Object"), 
+      Name: "RiftGL.Objects.ModelUpdate", 
+      IsPublic: true, 
+      IsReferenceType: true, 
+      MaximumConstructorArguments: 0, 
+    }, function ($interfaceBuilder) {
+    $ = $interfaceBuilder;
+
+    $.Method({Static:false, Public:true }, ".ctor", 
+      JSIL.MethodSignature.Void, 
+      ModelUpdate__ctor
+    );
+
+    $.Method({Static:false, Public:true }, "get_Model", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.GlObject")), 
+      ModelUpdate_get_Model
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Type", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.ModelUpdate+UpdateType")), 
+      ModelUpdate_get_Type
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_World", 
+      JSIL.MethodSignature.Return($asm02.TypeRef("RiftGL.Objects.Map")), 
+      ModelUpdate_get_World
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Model", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.GlObject")), 
+      ModelUpdate_set_Model
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Type", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.ModelUpdate+UpdateType")), 
+      ModelUpdate_set_Type
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_World", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Map")), 
+      ModelUpdate_set_World
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Field({Static:false, Public:false}, "ModelUpdate$Type$value", $asm02.TypeRef("RiftGL.Objects.ModelUpdate+UpdateType"))
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "ModelUpdate$World$value", $asm02.TypeRef("RiftGL.Objects.Map"))
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "ModelUpdate$Model$value", $asm02.TypeRef("RiftGL.Objects.GlObject"))
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Property({Static:false, Public:true }, "Type", $asm02.TypeRef("RiftGL.Objects.ModelUpdate+UpdateType"));
+
+    $.Property({Static:false, Public:true }, "World", $asm02.TypeRef("RiftGL.Objects.Map"));
+
+    $.Property({Static:false, Public:true }, "Model", $asm02.TypeRef("RiftGL.Objects.GlObject"));
+
+    return function (newThisType) { $thisType = newThisType; }; 
+  });
+
+})();
+
+/* enum RiftGL.Objects.ModelUpdate+UpdateType */ 
+
+JSIL.MakeEnum(
+  "RiftGL.Objects.ModelUpdate+UpdateType", false, {
+    Map: 0, 
+    Object: 1
+  }, false
+);
+
 /* class RiftGL.Objects.Player */ 
 
 (function Player$Members () {
@@ -2140,6 +2589,284 @@ JSIL.DeclareNamespace("RiftGL.View");
 
     $.Field({Static:false, Public:true }, "Camera", $asm02.TypeRef("RiftGL.Objects.Camera")); 
     $.Field({Static:false, Public:true }, "Terrain", $asm02.TypeRef("RiftGL.Objects.Terrain")); 
+    return function (newThisType) { $thisType = newThisType; }; 
+  });
+
+})();
+
+/* delegate RiftGL.Objects.MapCallback */ 
+
+JSIL.MakeDelegate("RiftGL.Objects.MapCallback", true, []);
+
+/* class RiftGL.Objects.RiftRepository */ 
+
+(function RiftRepository$Members () {
+  var $, $thisType;
+  var $T00 = function () {
+    return ($T00 = JSIL.Memoize($asm01.System.String)) ();
+  };
+  var $T01 = function () {
+    return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm01.System.Single)) ();
+  };
+  var $T03 = function () {
+    return ($T03 = JSIL.Memoize($asm02.RiftGL.Objects.MapCallback)) ();
+  };
+  var $T04 = function () {
+    return ($T04 = JSIL.Memoize($asm01.System.Text.StringBuilder)) ();
+  };
+  var $T05 = function () {
+    return ($T05 = JSIL.Memoize($asm01.System.Object)) ();
+  };
+  var $T06 = function () {
+    return ($T06 = JSIL.Memoize($asm02.RiftGL.Objects.RiftRequest)) ();
+  };
+  var $S00 = function () {
+    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Text.StringBuilder"), null))) ();
+  };
+  var $S01 = function () {
+    return ($S01 = JSIL.Memoize(new JSIL.MethodSignature($asm01.TypeRef("System.Text.StringBuilder"), [$asm01.TypeRef("System.String")]))) ();
+  };
+
+  function RiftRepository__ctor (url, username, password) {
+    this.RiftRepository$Url$value = url;
+    this.RiftRepository$Username$value = username;
+    this.RiftRepository$Password$value = password;
+  };
+
+  function RiftRepository_get_Password () {
+    return this.RiftRepository$Password$value;
+  };
+
+  function RiftRepository_get_Url () {
+    return this.RiftRepository$Url$value;
+  };
+
+  function RiftRepository_get_Username () {
+    return this.RiftRepository$Username$value;
+  };
+
+  function RiftRepository_LoadMap (location, distance, callback) {
+    var sb = $S00().Construct();
+    $S01().CallVirtual("Append", null, sb, JSIL.ConcatString("locationX=", location.X, "&"));
+    $S01().CallVirtual("Append", null, sb, JSIL.ConcatString("locationY=", location.Y, "&"));
+    $S01().CallVirtual("Append", null, sb, JSIL.ConcatString("locationZ=", location.Z, "&"));
+    $S01().CallVirtual("Append", null, sb, JSIL.ConcatString("distance=", distance));
+    var paramString = sb.toString();
+    ((new ($T06())(this.RiftRepository$Url$value, this.RiftRepository$Username$value, this.RiftRepository$Password$value))).Get(JSIL.ConcatString("/api/world?", paramString), callback);
+  };
+
+  function RiftRepository_set_Password (value) {
+    this.RiftRepository$Password$value = value;
+  };
+
+  function RiftRepository_set_Url (value) {
+    this.RiftRepository$Url$value = value;
+  };
+
+  function RiftRepository_set_Username (value) {
+    this.RiftRepository$Username$value = value;
+  };
+
+  JSIL.MakeType({
+      BaseType: $asm01.TypeRef("System.Object"), 
+      Name: "RiftGL.Objects.RiftRepository", 
+      IsPublic: true, 
+      IsReferenceType: true, 
+      MaximumConstructorArguments: 3, 
+    }, function ($interfaceBuilder) {
+    $ = $interfaceBuilder;
+
+    $.Method({Static:false, Public:true }, ".ctor", 
+      new JSIL.MethodSignature(null, [
+          $.String, $.String, 
+          $.String
+        ]), 
+      RiftRepository__ctor
+    );
+
+    $.Method({Static:false, Public:true }, "get_Password", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRepository_get_Password
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Url", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRepository_get_Url
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Username", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRepository_get_Username
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "LoadMap", 
+      new JSIL.MethodSignature(null, [
+          $asm02.TypeRef("RiftGL.Objects.Vector"), $.Single, 
+          $asm02.TypeRef("RiftGL.Objects.MapCallback")
+        ]), 
+      RiftRepository_LoadMap
+    );
+
+    $.Method({Static:false, Public:true }, "set_Password", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRepository_set_Password
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Url", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRepository_set_Url
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Username", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRepository_set_Username
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Field({Static:false, Public:false}, "RiftRepository$Url$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "RiftRepository$Password$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "RiftRepository$Username$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Property({Static:false, Public:true }, "Url", $.String);
+
+    $.Property({Static:false, Public:true }, "Password", $.String);
+
+    $.Property({Static:false, Public:true }, "Username", $.String);
+
+    return function (newThisType) { $thisType = newThisType; }; 
+  });
+
+})();
+
+/* class RiftGL.Objects.RiftRequest */ 
+
+(function RiftRequest$Members () {
+  var $, $thisType;
+  var $T00 = function () {
+    return ($T00 = JSIL.Memoize($asm01.System.String)) ();
+  };
+  var $T01 = function () {
+    return ($T01 = JSIL.Memoize($asm02.RiftGL.Objects.MapCallback)) ();
+  };
+  var $T02 = function () {
+    return ($T02 = JSIL.Memoize($asm01.System.Object)) ();
+  };
+
+  function RiftRequest__ctor (url, username, password) {
+    this.RiftRequest$Url$value = url;
+    this.RiftRequest$Username$value = username;
+    this.RiftRequest$Password$value = password;
+  };
+
+  function RiftRequest_Get (path, callback) {
+    var jquery = JSIL.GlobalNamespace.$;
+    jquery.getJSON(path, callback);
+  };
+
+  function RiftRequest_get_Password () {
+    return this.RiftRequest$Password$value;
+  };
+
+  function RiftRequest_get_Url () {
+    return this.RiftRequest$Url$value;
+  };
+
+  function RiftRequest_get_Username () {
+    return this.RiftRequest$Username$value;
+  };
+
+  function RiftRequest_set_Password (value) {
+    this.RiftRequest$Password$value = value;
+  };
+
+  function RiftRequest_set_Url (value) {
+    this.RiftRequest$Url$value = value;
+  };
+
+  function RiftRequest_set_Username (value) {
+    this.RiftRequest$Username$value = value;
+  };
+
+  JSIL.MakeType({
+      BaseType: $asm01.TypeRef("System.Object"), 
+      Name: "RiftGL.Objects.RiftRequest", 
+      IsPublic: true, 
+      IsReferenceType: true, 
+      MaximumConstructorArguments: 3, 
+    }, function ($interfaceBuilder) {
+    $ = $interfaceBuilder;
+
+    $.Method({Static:false, Public:true }, ".ctor", 
+      new JSIL.MethodSignature(null, [
+          $.String, $.String, 
+          $.String
+        ]), 
+      RiftRequest__ctor
+    );
+
+    $.Method({Static:false, Public:true }, "Get", 
+      new JSIL.MethodSignature(null, [$.String, $asm02.TypeRef("RiftGL.Objects.MapCallback")]), 
+      RiftRequest_Get
+    );
+
+    $.Method({Static:false, Public:true }, "get_Password", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRequest_get_Password
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Url", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRequest_get_Url
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "get_Username", 
+      JSIL.MethodSignature.Return($.String), 
+      RiftRequest_get_Username
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Password", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRequest_set_Password
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Url", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRequest_set_Url
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Method({Static:false, Public:true }, "set_Username", 
+      JSIL.MethodSignature.Action($.String), 
+      RiftRequest_set_Username
+    )
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
+
+    $.Field({Static:false, Public:false}, "RiftRequest$Url$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "RiftRequest$Password$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Field({Static:false, Public:false}, "RiftRequest$Username$value", $.String)
+      .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
+    $.Property({Static:false, Public:true }, "Url", $.String);
+
+    $.Property({Static:false, Public:true }, "Password", $.String);
+
+    $.Property({Static:false, Public:true }, "Username", $.String);
+
     return function (newThisType) { $thisType = newThisType; }; 
   });
 
@@ -2315,7 +3042,10 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T1A = JSIL.Memoize($asm01.System.Console)) ();
   };
   var $T1B = function () {
-    return ($T1B = JSIL.Memoize(System.Array.Of($asm01.System.UInt16))) ();
+    return ($T1B = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+  };
+  var $T1C = function () {
+    return ($T1C = JSIL.Memoize(System.Array.Of($asm01.System.UInt16))) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm01.TypeRef("System.Random"), [$asm01.TypeRef("System.Int32")]))) ();
@@ -2349,9 +3079,9 @@ JSIL.DeclareNamespace("RiftGL.View");
     this.Terrain$Random$value = $S00().Construct(seed);
     this.Terrain$Width$value = (w | 0);
     this.Terrain$scanDepth$value = 80;
-    this.Terrain$terrainMul$value = 2;
+    this.Terrain$terrainMul$value = 1;
     this.Terrain$textureMul$value = 0.25;
-    this.Terrain$heightMul$value = 5;
+    this.Terrain$heightMul$value = 10;
     this.fogColor = JSIL.Array.New($T04(), 4);
     this.fogColor[0] = 0.75;
     this.fogColor[1] = 0.9;
@@ -2366,6 +3096,8 @@ JSIL.DeclareNamespace("RiftGL.View");
     if (camera !== null) {
       this.InitShaders(camera);
       this.InitTexture(camera);
+      this.CreateVertesArray();
+      this.CreateIndices();
       this.InitBuffers(camera);
     }
   };
@@ -2401,15 +3133,14 @@ JSIL.DeclareNamespace("RiftGL.View");
     for (var i = 0; i < (this.Terrain$Width$value | 0); i = ((i + 1) | 0)) {
 
       for (var j = 0; j < (this.Terrain$Width$value | 0); j = ((j + 1) | 0)) {
-        var scaleR = +((+j / (+(this.Terrain$Width$value) - 1)));
-        var scaleC = +((+i / (+(this.Terrain$Width$value) - 1)));
-        var x = -32 + (scaleR * 64);
+        var scaleR = +((((+j + +this.GlObject$Position$value.X) % +(this.Terrain$Width$value)) / (+(this.Terrain$Width$value) - 1)));
+        var scaleC = +((((+i + +this.GlObject$Position$value.Z) % +(this.Terrain$Width$value)) / (+(this.Terrain$Width$value) - 1)));
+        var x = +((+(-+(this.Terrain$Width$value)) / 2)) + (scaleR * +(this.Terrain$Width$value));
         var y = +this.Terrain$HeightMap$value.HeightMap$Values$value[((Math.imul(i, this.Terrain$Width$value) + j) | 0)] * +this.Terrain$heightMul$value;
-        var z = -32 + (scaleC * 64);
+        var z = +((+(-+(this.Terrain$Width$value)) / 2)) + (scaleC * +(this.Terrain$Width$value));
         vertexBuffer.Add($S03().Construct(x, y, z));
-        var u = textureU * scaleR;
         var v = textureV * scaleC;
-        textureBuffer.Add($S03().Construct(u, v, 0));
+        textureBuffer.Add($S03().Construct((textureU * scaleR), v, 0));
       }
     }
     var normals = $S02().Construct();
@@ -2515,14 +3246,14 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_GetHeight (x, z) {
-    if (+z < 0) {
-      z = 0;
+    if (+x < +this.GlObject$Position$value.X) {
+      x = +this.GlObject$Position$value.X;
     }
-    if (+x < 0) {
-      x = 0;
+    if (+z < +this.GlObject$Position$value.Z) {
+      z = +this.GlObject$Position$value.Z;
     }
-    var projCameraX = Math.fround(x);
-    var projCameraZ = Math.fround(z);
+    var projCameraX = Math.fround(x) - +this.GlObject$Position$value.X;
+    var projCameraZ = Math.fround(z) - +this.GlObject$Position$value.Z;
     var col0 = ((projCameraX) | 0);
     var row0 = ((projCameraZ) | 0);
     var col = ((col0 + 1) | 0);
@@ -2556,33 +3287,33 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_InitBuffers (camera) {
-    this.CreateVertesArray();
     var gl = camera.GL;
-    this.Buffers.VertexPositions = gl.createBuffer();
-    this.Buffers.VertexNormals = (camera.GL).createBuffer();
-    this.Buffers.TextureCoords = (camera.GL).createBuffer();
-    var arg_1E7_2 = gl;
-    arg_1E7_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
-    var arg_303_2 = gl;
-    var arg_303_3 = gl.ARRAY_BUFFER;
-    arg_303_2.bufferData(arg_303_3, this.TerrainData.Vertices, gl.STATIC_DRAW);
-    var arg_3CB_2 = gl;
-    arg_3CB_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
-    var arg_4F1_2 = gl;
-    var arg_4F1_3 = camera.GL.ARRAY_BUFFER;
-    arg_4F1_2.bufferData(arg_4F1_3, this.TerrainData.Normals, camera.GL.STATIC_DRAW);
-    var arg_5B9_2 = gl;
-    arg_5B9_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
-    var arg_6DF_2 = gl;
-    var arg_6DF_3 = camera.GL.ARRAY_BUFFER;
-    arg_6DF_2.bufferData(arg_6DF_3, this.TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
-    this.CreateIndices();
+    if (this.Buffers.VertexPositions === null) {
+      this.Buffers.VertexPositions = gl.createBuffer();
+      this.Buffers.VertexNormals = (camera.GL).createBuffer();
+      this.Buffers.TextureCoords = (camera.GL).createBuffer();
+    }
+    var arg_1FA_2 = gl;
+    arg_1FA_2.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
+    var arg_316_2 = gl;
+    var arg_316_3 = gl.ARRAY_BUFFER;
+    arg_316_2.bufferData(arg_316_3, this.TerrainData.Vertices, gl.STATIC_DRAW);
+    var arg_3DE_2 = gl;
+    arg_3DE_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+    var arg_504_2 = gl;
+    var arg_504_3 = camera.GL.ARRAY_BUFFER;
+    arg_504_2.bufferData(arg_504_3, this.TerrainData.Normals, camera.GL.STATIC_DRAW);
+    var arg_5CC_2 = gl;
+    arg_5CC_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+    var arg_6F2_2 = gl;
+    var arg_6F2_3 = camera.GL.ARRAY_BUFFER;
+    arg_6F2_2.bufferData(arg_6F2_3, this.TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
     this.Buffers.Indices = gl.createBuffer();
-    var arg_804_2 = gl;
-    arg_804_2.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
-    var arg_920_2 = gl;
-    var arg_920_3 = gl.ELEMENT_ARRAY_BUFFER;
-    arg_920_2.bufferData(arg_920_3, this.TerrainData.Indices, gl.STATIC_DRAW);
+    var arg_810_2 = gl;
+    arg_810_2.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+    var arg_92C_2 = gl;
+    var arg_92C_3 = gl.ELEMENT_ARRAY_BUFFER;
+    arg_92C_2.bufferData(arg_92C_3, this.TerrainData.Indices, gl.STATIC_DRAW);
   };
 
   function Terrain_InitShaders (viewPort) {
@@ -2694,10 +3425,16 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Terrain_OnDraw (camera) {
-    var arg_C8_2 = camera.GL;
-    arg_C8_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
-    var arg_209_2 = camera.GL;
-    arg_209_2.vertexAttribPointer(
+    var offsetX = +this.GlObject$Position$value.X;
+    var offsetZ = +this.GlObject$Position$value.Z;
+    var matrix = $T14().GLMatrix4.create();
+    $T14().GLMatrix4.identity(matrix);
+    matrix = $T14().GLMatrix4.translate(matrix, (this.GlObject$Position$value).ToFloatVector());
+    $T14().Matrices.ModelView = $T1B().$Cast($T14().GLMatrix4.multiply($T14().Matrices.ModelView, matrix, $T14().Matrices.ModelView));
+    var arg_2E0_2 = camera.GL;
+    arg_2E0_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
+    var arg_421_2 = camera.GL;
+    arg_421_2.vertexAttribPointer(
       $thisType.TerrainShaderProgram.VertexPosition, 
       3, 
       camera.GL.FLOAT, 
@@ -2705,10 +3442,10 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_2D6_2 = camera.GL;
-    arg_2D6_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
-    var arg_417_2 = camera.GL;
-    arg_417_2.vertexAttribPointer(
+    var arg_4EE_2 = camera.GL;
+    arg_4EE_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
+    var arg_62F_2 = camera.GL;
+    arg_62F_2.vertexAttribPointer(
       $thisType.TerrainShaderProgram.VertexNormal, 
       3, 
       camera.GL.FLOAT, 
@@ -2716,10 +3453,10 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_4E4_2 = camera.GL;
-    arg_4E4_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
-    var arg_625_2 = camera.GL;
-    arg_625_2.vertexAttribPointer(
+    var arg_6FC_2 = camera.GL;
+    arg_6FC_2.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
+    var arg_83D_2 = camera.GL;
+    arg_83D_2.vertexAttribPointer(
       $thisType.TerrainShaderProgram.TextureCoord, 
       2, 
       camera.GL.FLOAT, 
@@ -2727,22 +3464,22 @@ JSIL.DeclareNamespace("RiftGL.View");
       0, 
       0
     );
-    var arg_6DD_2 = camera.GL;
-    arg_6DD_2.activeTexture(camera.GL.TEXTURE0);
-    var arg_7A5_2 = camera.GL;
-    arg_7A5_2.bindTexture(camera.GL.TEXTURE_2D, this.TerrainTexture);
+    var arg_8F5_2 = camera.GL;
+    arg_8F5_2.activeTexture(camera.GL.TEXTURE0);
+    var arg_9BD_2 = camera.GL;
+    arg_9BD_2.bindTexture(camera.GL.TEXTURE_2D, this.TerrainTexture);
     (camera.GL).uniform1i($T14().Uniforms.Sampler, 0);
     (camera.GL).uniformMatrix4fv($T14().Uniforms.ProjectionMatrix, false, $T14().Matrices.Projection);
     (camera.GL).uniformMatrix4fv($T14().Uniforms.ModelViewMatrix, false, $T14().Matrices.ModelView);
     $T14().GLMatrix4.toInverseMat3($T14().Matrices.ModelView, $T14().Matrices.Normal);
     $T14().GLMatrix3.transpose($T14().Matrices.Normal);
     (camera.GL).uniformMatrix3fv($T14().Uniforms.NormalMatrix, false, $T14().Matrices.Normal);
-    var arg_B80_2 = camera.GL;
-    arg_B80_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
-    var arg_CB8_2 = camera.GL;
-    var arg_CB8_3 = camera.GL.TRIANGLES;
-    var arg_CB8_4 = (this.TerrainData.Indices.length | 0);
-    arg_CB8_2.drawElements(arg_CB8_3, arg_CB8_4, camera.GL.UNSIGNED_SHORT, 0);
+    var arg_D98_2 = camera.GL;
+    arg_D98_2.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
+    var arg_ED0_2 = camera.GL;
+    var arg_ED0_3 = camera.GL.TRIANGLES;
+    var arg_ED0_4 = (this.TerrainData.Indices.length | 0);
+    arg_ED0_2.drawElements(arg_ED0_3, arg_ED0_4, camera.GL.UNSIGNED_SHORT, 0);
   };
 
   function Terrain_RangedRandom (v1, v2) {
@@ -2850,7 +3587,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     )
       .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
 
-    $.Method({Static:false, Public:false}, "get_Width", 
+    $.Method({Static:false, Public:true }, "get_Width", 
       JSIL.MethodSignature.Return($.Int32), 
       Terrain_get_Width
     )
@@ -2876,7 +3613,7 @@ JSIL.DeclareNamespace("RiftGL.View");
       Terrain_GetWidth
     );
 
-    $.Method({Static:false, Public:false}, "InitBuffers", 
+    $.Method({Static:false, Public:true }, "InitBuffers", 
       JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Camera")), 
       Terrain_InitBuffers
     );
@@ -2950,7 +3687,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     )
       .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
 
-    $.Method({Static:false, Public:false}, "set_Width", 
+    $.Method({Static:false, Public:true }, "set_Width", 
       JSIL.MethodSignature.Action($.Int32), 
       Terrain_set_Width
     )
@@ -2980,7 +3717,7 @@ JSIL.DeclareNamespace("RiftGL.View");
 
     $.Property({Static:false, Public:false}, "Random", $asm01.TypeRef("System.Random"));
 
-    $.Property({Static:false, Public:false}, "Width", $.Int32);
+    $.Property({Static:false, Public:true }, "Width", $.Int32);
 
     $.Property({Static:false, Public:false}, "terrainMul", $.Single);
 
@@ -3489,10 +4226,31 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T09 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
   var $T0A = function () {
-    return ($T0A = JSIL.Memoize($asm02.RiftGL.View.AudioSystem)) ();
+    return ($T0A = JSIL.Memoize($asm01.System.Object)) ();
   };
   var $T0B = function () {
-    return ($T0B = JSIL.Memoize($asm02.RiftGL.Objects.Audio)) ();
+    return ($T0B = JSIL.Memoize($asm01.System.Math)) ();
+  };
+  var $T0C = function () {
+    return ($T0C = JSIL.Memoize($asm01.System.Int32)) ();
+  };
+  var $T0D = function () {
+    return ($T0D = JSIL.Memoize($asm01.System.Environment)) ();
+  };
+  var $T0E = function () {
+    return ($T0E = JSIL.Memoize($asm02.RiftGL.Objects.RiftRepository)) ();
+  };
+  var $T0F = function () {
+    return ($T0F = JSIL.Memoize($asm02.RiftGL.Objects.MapCallback)) ();
+  };
+  var $T10 = function () {
+    return ($T10 = JSIL.Memoize($asm02.RiftGL.Page)) ();
+  };
+  var $T11 = function () {
+    return ($T11 = JSIL.Memoize($asm02.RiftGL.View.AudioSystem)) ();
+  };
+  var $T12 = function () {
+    return ($T12 = JSIL.Memoize($asm02.RiftGL.Objects.Audio)) ();
   };
   var $S00 = function () {
     return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
@@ -3504,11 +4262,11 @@ JSIL.DeclareNamespace("RiftGL.View");
   function World__ctor (camera) {
     this.World$Camera$value = camera;
     this.World$Terrain$value = (new ($T01())()).__Initialize__({
-        Position: $S00().Construct(0, 0, -10)}
+        Position: $S00().Construct(+((+(-+32) / 2)), 0, +((+(-+32) / 2)))}
     );
     this.World$Crate$value = (new ($T03())()).__Initialize__({
         Position: $S00().Construct(0, 0, 3), 
-        Size: 4}
+        Size: 1}
     );
     (this.World$Crate$value).InitTexture(camera);
     (this.World$Crate$value).InitShaders(camera);
@@ -3533,6 +4291,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     if (+(this.World$Camera$value).get_Location().Y < (terrainHeight + +this.World$Player$value.GlObject$Size$value)) {
       this.World$Camera$value.Location.Y = terrainHeight + +this.World$Player$value.GlObject$Size$value;
     }
+    this.World$Player$value.GlObject$Position$value = (this.World$Camera$value).get_Location();
     terrainHeight = +(this.World$Terrain$value).GetHeight(this.World$Crate$value.GlObject$Position$value.X, this.World$Crate$value.GlObject$Position$value.Z);
     if (+this.World$Crate$value.GlObject$Position$value.Y < (terrainHeight + +this.World$Crate$value.GlObject$Size$value)) {
       this.World$Crate$value.GlObject$Position$value.Y = terrainHeight + +this.World$Crate$value.GlObject$Size$value;
@@ -3594,12 +4353,32 @@ JSIL.DeclareNamespace("RiftGL.View");
     return this.World$WorldSound$value;
   };
 
-  function World_LoadWorld () {
+  function World_LoadWorld (worldMap, camera) {
+    (this.World$Terrain$value).InitBuffers(camera);
   };
 
   function World_Prepare () {
+    (this.World$Camera$value.GL).clearColor(this.World$Terrain$value.fogColor[0], this.World$Terrain$value.fogColor[1], this.World$Terrain$value.fogColor[2], this.World$Terrain$value.fogColor[3]);
+    var terrain2D = $S00().Construct(this.World$Terrain$value.GlObject$Position$value.X, 0, this.World$Terrain$value.GlObject$Position$value.Z);
+    var camera2D = $S00().Construct((this.World$Camera$value).get_Location().X, 0, (this.World$Camera$value).get_Location().Z);
+    if ((Math.abs(($T02().op_Subtraction(terrain2D, camera2D)).Length())) > +((+(this.World$Terrain$value.Terrain$Width$value) / 4))) {
+      this.RequestMapUpdate();
+    }
     (this.World$Terrain$value).Prepare();
     (this.World$Crate$value).Prepare();
+  };
+
+  function World_RequestMapUpdate () {
+    var now = ($T0D().get_TickCount() | 0);
+    if (((now - (this.MapRequestSent | 0)) | 0) > 15000) {
+      this.MapRequestSent = ($T0D().get_TickCount() | 0);
+      var repository = new ($T0E())("lpmud.local", "user", "password");
+      repository.LoadMap(
+        (this.World$Camera$value).get_Location(), 
+        128, 
+        $T0F().New($T10(), $T10().LoadWorldCallback)
+      );
+    }
   };
 
   function World_set_AudioSystem (value) {
@@ -3730,13 +4509,21 @@ JSIL.DeclareNamespace("RiftGL.View");
       .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute"));
 
     $.Method({Static:false, Public:true }, "LoadWorld", 
-      JSIL.MethodSignature.Void, 
+      new JSIL.MethodSignature(null, [$.Object, $asm02.TypeRef("RiftGL.Objects.Camera")]), 
       World_LoadWorld
-    );
+    )
+      .Parameter(0, "worldMap", function (_) {
+          _.Attribute($asm05.TypeRef("System.Runtime.CompilerServices.DynamicAttribute"))
+        });
 
     $.Method({Static:false, Public:true }, "Prepare", 
       JSIL.MethodSignature.Void, 
       World_Prepare
+    );
+
+    $.Method({Static:false, Public:false}, "RequestMapUpdate", 
+      JSIL.MethodSignature.Void, 
+      World_RequestMapUpdate
     );
 
     $.Method({Static:false, Public:true }, "set_AudioSystem", 
@@ -3804,6 +4591,7 @@ JSIL.DeclareNamespace("RiftGL.View");
       World_UnloadWorld
     );
 
+    $.Field({Static:false, Public:true }, "MapRequestSent", $.Int32); 
     $.Field({Static:false, Public:false}, "gameDone", $.Boolean); 
     $.Field({Static:false, Public:false}, "World$Terrain$value", $asm02.TypeRef("RiftGL.Objects.Terrain"))
       .Attribute($asm01.TypeRef("System.Runtime.CompilerServices.CompilerGeneratedAttribute")); 
@@ -3858,62 +4646,95 @@ JSIL.DeclareNamespace("RiftGL.View");
     return ($T00 = JSIL.Memoize($asm01.System.Boolean)) ();
   };
   var $T01 = function () {
-    return ($T01 = JSIL.Memoize($asm01.System.Int32)) ();
+    return ($T01 = JSIL.Memoize($asm03.System.Collections.Generic.Queue$b1.Of($asm02.RiftGL.Objects.ModelUpdate))) ();
   };
   var $T02 = function () {
-    return ($T02 = JSIL.Memoize($asm01.System.Environment)) ();
+    return ($T02 = JSIL.Memoize($asm01.System.Int32)) ();
   };
   var $T03 = function () {
-    return ($T03 = JSIL.Memoize($asm01.System.Single)) ();
+    return ($T03 = JSIL.Memoize($asm01.System.Environment)) ();
   };
   var $T04 = function () {
-    return ($T04 = JSIL.Memoize($asm02.RiftGL.Objects.Camera)) ();
+    return ($T04 = JSIL.Memoize($asm01.System.Single)) ();
   };
   var $T05 = function () {
-    return ($T05 = JSIL.Memoize($asm02.RiftGL.Objects.World)) ();
+    return ($T05 = JSIL.Memoize($asm02.RiftGL.Objects.Camera)) ();
   };
   var $T06 = function () {
-    return ($T06 = JSIL.Memoize($asm01.System.Object)) ();
+    return ($T06 = JSIL.Memoize($asm02.RiftGL.Objects.World)) ();
   };
   var $T07 = function () {
-    return ($T07 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
+    return ($T07 = JSIL.Memoize($asm01.System.Object)) ();
   };
   var $T08 = function () {
-    return ($T08 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
+    return ($T08 = JSIL.Memoize($asm02.RiftGL.View.ViewPort)) ();
   };
   var $T09 = function () {
-    return ($T09 = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
+    return ($T09 = JSIL.Memoize($asm02.RiftGL.Objects.GlObject)) ();
   };
   var $T0A = function () {
-    return ($T0A = JSIL.Memoize($asm01.System.Exception)) ();
+    return ($T0A = JSIL.Memoize($asm02.RiftGL.Objects.ModelUpdate)) ();
   };
   var $T0B = function () {
-    return ($T0B = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
+    return ($T0B = JSIL.Memoize($asm02.RiftGL.Objects.ModelUpdate_UpdateType)) ();
   };
   var $T0C = function () {
-    return ($T0C = JSIL.Memoize($asm02.RiftGL.Objects.Gui)) ();
+    return ($T0C = JSIL.Memoize($asm02.RiftGL.Objects.CubeData)) ();
   };
   var $T0D = function () {
-    return ($T0D = JSIL.Memoize($asm01.System.Console)) ();
+    return ($T0D = JSIL.Memoize($asm01.System.Exception)) ();
   };
   var $T0E = function () {
-    return ($T0E = JSIL.Memoize($asm01.System.Action$b1.Of($asm01.System.Object))) ();
+    return ($T0E = JSIL.Memoize($asm02.RiftGL.Objects.Vector)) ();
   };
   var $T0F = function () {
-    return ($T0F = JSIL.Memoize($asm01.System.Action)) ();
+    return ($T0F = JSIL.Memoize($asm02.RiftGL.Objects.Gui)) ();
+  };
+  var $T10 = function () {
+    return ($T10 = JSIL.Memoize($asm01.System.Console)) ();
+  };
+  var $T11 = function () {
+    return ($T11 = JSIL.Memoize($asm01.System.Action$b1.Of($asm01.System.Object))) ();
+  };
+  var $T12 = function () {
+    return ($T12 = JSIL.Memoize($asm02.RiftGL.Objects.RiftRepository)) ();
+  };
+  var $T13 = function () {
+    return ($T13 = JSIL.Memoize($asm02.RiftGL.Objects.MapCallback)) ();
+  };
+  var $T14 = function () {
+    return ($T14 = JSIL.Memoize($asm02.RiftGL.Objects.Map)) ();
+  };
+  var $T15 = function () {
+    return ($T15 = JSIL.Memoize($asm02.RiftGL.Objects.HeightMap)) ();
+  };
+  var $T16 = function () {
+    return ($T16 = JSIL.Memoize($asm02.RiftGL.Objects.Terrain)) ();
+  };
+  var $T17 = function () {
+    return ($T17 = JSIL.Memoize(System.Array.Of($asm01.System.Single))) ();
+  };
+  var $T18 = function () {
+    return ($T18 = JSIL.Memoize($asm01.System.Action)) ();
   };
   var $S00 = function () {
-    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
+    return ($S00 = JSIL.Memoize(new JSIL.ConstructorSignature($asm03.TypeRef("System.Collections.Generic.Queue`1", [$asm02.TypeRef("RiftGL.Objects.ModelUpdate")]), null))) ();
+  };
+  var $S01 = function () {
+    return ($S01 = JSIL.Memoize(new JSIL.ConstructorSignature($asm02.TypeRef("RiftGL.Objects.Vector"), [
         $asm01.TypeRef("System.Single"), $asm01.TypeRef("System.Single"), 
         $asm01.TypeRef("System.Single")
       ]))) ();
   };
 
   function Page_Animate () {
-    var now = ($T02().get_TickCount() | 0);
+    var now = ($T03().get_TickCount() | 0);
     if (($thisType.LastTime | 0) !== 0) {
       var elapsed = +((+(now - ($thisType.LastTime | 0)) / 1000));
       if (elapsed > 0) {
+        if (elapsed > 0.25) {
+          elapsed = 0.25;
+        }
         $thisType.Camera.Animate(elapsed);
         $thisType.World.Animate(elapsed);
         $thisType.Camera.Update();
@@ -3928,7 +4749,7 @@ JSIL.DeclareNamespace("RiftGL.View");
     $thisType.Camera.GL.clear(arg_291_2 | $thisType.Camera.GL.DEPTH_BUFFER_BIT);
     $thisType.World.Draw($thisType.Camera);
     var lighting = $T00().$Cast($thisType.Document.getElementById("lighting").checked);
-    $thisType.Camera.GL.uniform1i($T07().Uniforms.UseLighting, (
+    $thisType.Camera.GL.uniform1i($T08().Uniforms.UseLighting, (
         lighting
            ? 1
            : 0)
@@ -3975,23 +4796,33 @@ JSIL.DeclareNamespace("RiftGL.View");
     }
   };
 
+  function Page_HandleUpdates () {
+    if (($thisType.UpdateEvents.get_Count() | 0) > 0) {
+      var update = $T01().prototype.Dequeue.call($thisType.UpdateEvents);
+      if (update.ModelUpdate$Type$value === $T0B().Map) {
+        $thisType.World.LoadWorld(update.ModelUpdate$World$value, $thisType.Camera);
+        $thisType.World.MapRequestSent = 0;
+      }
+    }
+  };
+
   function Page_InitBuffers () {
     var arg_12B_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_12B_3, $T07().Buffers.VertexPositions = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_12B_3, $T08().Buffers.VertexPositions = $thisType.Camera.GL.createBuffer());
     var arg_25C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_25C_3, $T09().Positions, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_25C_3, $T0C().Positions, $thisType.Camera.GL.STATIC_DRAW);
     var arg_38C_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_38C_3, $T07().Buffers.VertexNormals = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_38C_3, $T08().Buffers.VertexNormals = $thisType.Camera.GL.createBuffer());
     var arg_4BD_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_4BD_3, $T09().Normals, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_4BD_3, $T0C().Normals, $thisType.Camera.GL.STATIC_DRAW);
     var arg_5ED_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_5ED_3, $T07().Buffers.TextureCoords = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_5ED_3, $T08().Buffers.TextureCoords = $thisType.Camera.GL.createBuffer());
     var arg_71E_3 = $thisType.Camera.GL.ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_71E_3, $T09().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_71E_3, $T0C().TexCoords, $thisType.Camera.GL.STATIC_DRAW);
     var arg_84E_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
-    $thisType.Camera.GL.bindBuffer(arg_84E_3, $T07().Buffers.Indices = $thisType.Camera.GL.createBuffer());
+    $thisType.Camera.GL.bindBuffer(arg_84E_3, $T08().Buffers.Indices = $thisType.Camera.GL.createBuffer());
     var arg_97F_3 = $thisType.Camera.GL.ELEMENT_ARRAY_BUFFER;
-    $thisType.Camera.GL.bufferData(arg_97F_3, $T09().Indices, $thisType.Camera.GL.STATIC_DRAW);
+    $thisType.Camera.GL.bufferData(arg_97F_3, $T0C().Indices, $thisType.Camera.GL.STATIC_DRAW);
   };
 
   function Page_InitGL ($exception) {
@@ -4001,15 +4832,15 @@ JSIL.DeclareNamespace("RiftGL.View");
     } catch ($exception) {
     }
     if (gl) {
-      $thisType.Camera = (new ($T04())()).__Initialize__({
+      $thisType.Camera = (new ($T05())()).__Initialize__({
           GL: gl, 
-          Location: $S00().Construct(0, 0, -3)}
+          Location: $S01().Construct(0, 0, -3)}
       );
-      $T07().Document = $thisType.Document;
-      $T07().Canvas = $thisType.Canvas;
-      $thisType.World = new ($T05())($thisType.Camera);
-      $thisType.Gui = new ($T0C())();
-      $T0D().WriteLine("Initialized WebGL");
+      $T08().Document = $thisType.Document;
+      $T08().Canvas = $thisType.Canvas;
+      $thisType.World = new ($T06())($thisType.Camera);
+      $thisType.Gui = new ($T0F())();
+      $T10().WriteLine("Initialized WebGL");
       var result = true;
     } else {
       JSIL.GlobalNamespace.alert("Could not initialize WebGL");
@@ -4036,19 +4867,42 @@ JSIL.DeclareNamespace("RiftGL.View");
       $thisType.InitShaders();
       $thisType.InitBuffers();
       $thisType.InitTexture();
-      $thisType.Document.onkeydown = $T0E().New($thisType, $thisType.OnKeyDown);
-      $thisType.Document.onkeyup = $T0E().New($thisType, $thisType.OnKeyUp);
-      $thisType.Document.onmousemove = $T0E().New($thisType, $thisType.OnMouseMove);
+      $thisType.Document.onkeydown = $T11().New($thisType, $thisType.OnKeyDown);
+      $thisType.Document.onkeyup = $T11().New($thisType, $thisType.OnKeyUp);
+      $thisType.Document.onmousemove = $T11().New($thisType, $thisType.OnMouseMove);
       $thisType.Tick();
+      $thisType.LoadWorld();
     }
   };
 
+  function Page_LoadWorld () {
+    var repository = new ($T12())("lpmud.local", "user", "password");
+    repository.LoadMap($thisType.World.World$Player$value.GlObject$Position$value, 128, $T13().New($thisType, $thisType.LoadWorldCallback));
+  };
+
+  function Page_LoadWorldCallback (data) {
+    var arg_A2_0 = $thisType.World.World$Terrain$value.Terrain$HeightMap$value;
+    arg_A2_0.HeightMap$Values$value = $T17().$Cast(data.HeightMap);
+    var arg_142_0 = $thisType.World.World$Terrain$value;
+    arg_142_0.Terrain$Width$value = $T02().$Cast(data.Columns);
+    var arg_1E7_0 = $thisType.World.World$Terrain$value.GlObject$Position$value;
+    arg_1E7_0.X = $T04().$Cast(data.X);
+    var arg_28B_0 = $thisType.World.World$Terrain$value.GlObject$Position$value;
+    arg_28B_0.Z = $T04().$Cast(data.Z);
+    $thisType.World.World$Terrain$value.CreateVertesArray();
+    $thisType.World.World$Terrain$value.CreateIndices();
+    $T01().prototype.Enqueue.call($thisType.UpdateEvents, (new ($T0A())()).__Initialize__({
+          World: data, 
+          Type: $T0B().Map}
+      ));
+  };
+
   function Page_OnKeyDown (e) {
-    $thisType.HeldKeys[$T01().$Cast(e.keyCode)] = 1;
+    $thisType.HeldKeys[$T02().$Cast(e.keyCode)] = 1;
   };
 
   function Page_OnKeyUp (e) {
-    $thisType.HeldKeys[$T01().$Cast(e.keyCode)] = 0;
+    $thisType.HeldKeys[$T02().$Cast(e.keyCode)] = 0;
   };
 
   function Page_OnMouseMove (e) {
@@ -4060,8 +4914,9 @@ JSIL.DeclareNamespace("RiftGL.View");
   };
 
   function Page_Tick ($exception) {
-    JSIL.GlobalNamespace.requestAnimFrame($T0F().New($thisType, $thisType.Tick));
+    JSIL.GlobalNamespace.requestAnimFrame($T18().New($thisType, $thisType.Tick));
     $thisType.HandleKeys();
+    $thisType.HandleUpdates();
     $thisType.OnPrepare();
     $thisType.World.Prepare();
     $thisType.Gui.Prepare();
@@ -4088,6 +4943,11 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Method({Static:true , Public:true }, "HandleKeys", 
       JSIL.MethodSignature.Void, 
       Page_HandleKeys
+    );
+
+    $.Method({Static:true , Public:false}, "HandleUpdates", 
+      JSIL.MethodSignature.Void, 
+      Page_HandleUpdates
     );
 
     $.Method({Static:true , Public:true }, "InitBuffers", 
@@ -4118,6 +4978,16 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Method({Static:true , Public:true }, "Load", 
       JSIL.MethodSignature.Void, 
       Page_Load
+    );
+
+    $.Method({Static:true , Public:true }, "LoadWorld", 
+      JSIL.MethodSignature.Void, 
+      Page_LoadWorld
+    );
+
+    $.Method({Static:true , Public:true }, "LoadWorldCallback", 
+      JSIL.MethodSignature.Action($asm02.TypeRef("RiftGL.Objects.Map")), 
+      Page_LoadWorldCallback
     );
 
     $.Method({Static:true , Public:true }, "OnKeyDown", 
@@ -4165,12 +5035,14 @@ JSIL.DeclareNamespace("RiftGL.View");
     $.Field({Static:true , Public:true }, "Camera", $asm02.TypeRef("RiftGL.Objects.Camera")); 
     $.Field({Static:true , Public:true }, "World", $asm02.TypeRef("RiftGL.Objects.World")); 
     $.Field({Static:true , Public:true }, "Gui", $asm02.TypeRef("RiftGL.Objects.Gui")); 
+    $.Field({Static:true , Public:false}, "UpdateEvents", $asm03.TypeRef("System.Collections.Generic.Queue`1", [$asm02.TypeRef("RiftGL.Objects.ModelUpdate")])); 
     $.Field({Static:true , Public:false}, "oldX", $.Single); 
     $.Field({Static:true , Public:false}, "oldY", $.Single); 
     $.Field({Static:true , Public:false}, "mouseSensitivity", $.Single, 10); 
     function Page__cctor () {
       $thisType.HeldKeys = JSIL.Array.New($T00(), 255);
       $thisType.LastTime = 0;
+      $thisType.UpdateEvents = $S00().Construct();
       $thisType.mouseSensitivity = 10;
     };
 

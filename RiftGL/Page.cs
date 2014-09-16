@@ -4,6 +4,9 @@ using JSIL;
 
 namespace RiftGL
 {
+    using System.Collections.Generic;
+
+    using RiftGL.Extensions;
     using RiftGL.Objects;
     using RiftGL.View;
 
@@ -41,6 +44,8 @@ namespace RiftGL
                 Document.onmousemove = (Action<dynamic>)OnMouseMove;
 
                 Tick();
+
+                LoadWorld();
             }
         }
 
@@ -76,6 +81,26 @@ namespace RiftGL
             }
             Builtins.Global["alert"]("Could not initialize WebGL");
             return false;
+        }
+
+        public static void LoadWorld()
+        {
+            var repository = new RiftRepository("lpmud.local", "user", "password");
+            repository.LoadMap(World.Player.Position, 128f, LoadWorldCallback);
+        }
+
+        public static void LoadWorldCallback(Map data)
+        {
+            //var map = data.FromJson<Map>();
+            dynamic worldMap = data;
+            World.Terrain.HeightMap.Values = worldMap.HeightMap;
+            World.Terrain.Width = worldMap.Columns;
+            World.Terrain.Position.X = worldMap.X;
+            World.Terrain.Position.Z = worldMap.Z;
+            World.Terrain.CreateVertesArray();
+            World.Terrain.CreateIndices();
+
+            UpdateEvents.Enqueue(new ModelUpdate { World = data, Type = ModelUpdate.UpdateType.Map });
         }
 
         public static void InitMatrices()
@@ -117,6 +142,8 @@ namespace RiftGL
 
             HandleKeys();
 
+            HandleUpdates();
+
             OnPrepare();
 
             World.Prepare();
@@ -129,6 +156,21 @@ namespace RiftGL
                 DrawScene();
             }
             catch { }
+        }
+
+        private static Queue<ModelUpdate> UpdateEvents = new Queue<ModelUpdate>();
+
+        private static void HandleUpdates()
+        {
+            if (UpdateEvents.Count > 0)
+            {
+                var update = UpdateEvents.Dequeue();
+                if (update.Type == ModelUpdate.UpdateType.Map)
+                {
+                    World.LoadWorld(update.World, Camera);
+                    World.MapRequestSent = 0;
+                }
+            }
         }
 
         public static void HandleKeys()
@@ -220,6 +262,11 @@ namespace RiftGL
                 var elapsed = (now - LastTime)/1000f;
                 if (elapsed > 0)
                 {
+                    if (elapsed > 0.25f)
+                    {
+                        elapsed = 0.25f;
+                    }
+
                     Camera.Animate(elapsed);
                     World.Animate(elapsed);
                     Camera.Update();

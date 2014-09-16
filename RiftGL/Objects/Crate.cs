@@ -128,6 +128,7 @@
 
         protected override void OnDraw(Camera camera)
         {
+            //ViewPort.GLMatrix4.identity(ViewPort.Matrices.ModelView);
             ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.translate(ViewPort.Matrices.ModelView, new[] { Position.X, Position.Y, Position.Z });
             ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.rotateX(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.X));
             ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.rotateY(ViewPort.Matrices.ModelView, DegreesToRadians(Rotation.Y));
@@ -145,9 +146,7 @@
             camera.GL.bindTexture(camera.GL.TEXTURE_2D, CrateTexture);
             camera.GL.uniform1i(ViewPort.Uniforms.Sampler, 0);
 
-
             camera.GL.bindBuffer(camera.GL.ELEMENT_ARRAY_BUFFER, ViewPort.Buffers.Indices);
-
 
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ProjectionMatrix, false, ViewPort.Matrices.Projection);
             camera.GL.uniformMatrix4fv(ViewPort.Uniforms.ModelViewMatrix, false, ViewPort.Matrices.ModelView);

@@ -3,4 +3,4 @@
 REM xcopy /y *.js ..\Rifts\Scripts\
 
 xcopy /y Rift*.js ..\Rifts\Scripts\
-xcopy /y Files\* ..\Rifts\Files\
+xcopy /y Files\* ..\Rifts\Scripts\Files\

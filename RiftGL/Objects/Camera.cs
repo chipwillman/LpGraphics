@@ -358,6 +358,7 @@
                 fAcceleration = new Vector();
                 Velocity = new Vector();
             }
+
             fAcceleration.Y = -9.8f;
             Velocity += fAcceleration * deltaTime;
 

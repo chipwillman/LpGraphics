@@ -41,14 +41,13 @@
         public float GetScanDepth() { return scanDepth; }
 
      	public float GetHeight(double x, double z)
-	    {	
-		    float projCameraX, projCameraZ;
-     	    if (z < 0) z = 0;
-     	    if (x < 0) x = 0;
+	    {
+     	    if (x < Position.X) x = Position.X;
+            if (z < Position.Z) z = Position.Z;
 
 		    // divide by the grid-spacing if it is not 1
-		    projCameraX = (float)x;
-		    projCameraZ = (float)z;
+		    float projCameraX = (float)x - this.Position.X;
+		    float projCameraZ = (float)z - this.Position.Z;
 
 		    // compute the height field coordinates (Col0, Row0)
 		    // and (Col1, Row1) that identify the height field cell 
@@ -97,9 +96,9 @@
             Width = w;
 
             scanDepth = 80.0f;
-            terrainMul = 2.0f;
+            terrainMul = 1.0f;
             textureMul = 0.25f;
-            heightMul = 5.0f;
+            heightMul = 10.0f;
 
             fogColor = new float[4];
             fogColor[0] = 0.75f;
@@ -121,16 +120,18 @@
             {
                 this.InitShaders(camera);
                 this.InitTexture(camera);
+                this.CreateVertesArray();
+                this.CreateIndices();
+
                 this.InitBuffers(camera);
             }
-
         }
 
         #region Implementation
 
         private Random Random { get; set; }
 
-        private int Width { get; set; }
+        public int Width { get; set; }
 
         private float terrainMul { get; set; }
 
@@ -165,16 +166,24 @@
             }
         }
 
-        private void InitBuffers(Camera camera)
+        public void InitBuffers(Camera camera)
         {
-            this.CreateVertesArray();
-
             var gl = camera.GL;
 
-            this.Buffers.VertexPositions = gl.createBuffer();
-            this.Buffers.VertexNormals = camera.GL.createBuffer();
-            this.Buffers.TextureCoords = camera.GL.createBuffer();
-            
+            if (this.Buffers.VertexPositions != null)
+            {
+                gl.deleteBuffer(this.Buffers.VertexPositions);
+                gl.deleteBuffer(this.Buffers.VertexNormals);
+                gl.deleteBuffer(this.Buffers.TextureCoords);
+            }
+
+            //if (this.Buffers.VertexPositions == null)
+            {
+                this.Buffers.VertexPositions = gl.createBuffer();
+                this.Buffers.VertexNormals = camera.GL.createBuffer();
+                this.Buffers.TextureCoords = camera.GL.createBuffer();
+            }
+
             gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffers.VertexPositions);
             gl.bufferData(gl.ARRAY_BUFFER, this.TerrainData.Vertices, gl.STATIC_DRAW);
 
@@ -183,9 +192,6 @@
 
             gl.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.TextureCoords);
             gl.bufferData(camera.GL.ARRAY_BUFFER, TerrainData.TextureCoords, camera.GL.STATIC_DRAW);
-
-
-            this.CreateIndices();
 
             this.Buffers.Indices = gl.createBuffer();
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.Buffers.Indices);
@@ -227,14 +233,17 @@
             {
                 for (int j = 0; j < this.Width; j++)
                 {
-                    float scaleR = (j / ((float)this.Width - 1));
-                    float scaleC = (i / ((float)this.Width - 1));
-                    float x = -32f + scaleR * 64;
+                    float scaleR = ((j + Position.X) % this.Width / ((float)this.Width - 1));
+                    float scaleC = ((i + Position.Z) % this.Width / ((float)this.Width - 1));
+
+                    float x = -this.Width / 2.0f + scaleR * this.Width;
                     float y = this.HeightMap.Values[i * this.Width + j] * heightMul;
-                    float z = -32f + scaleC * 64;
+                    float z = -this.Width / 2.0f + scaleC * this.Width;
+
                     vertexBuffer.Add(new Vector(x, y, z));
-                    float u = textureU * scaleR;
-                    float v = textureV * scaleC;
+
+                    float u = (textureU * scaleR );
+                    float v = (textureV * scaleC );
                     textureBuffer.Add(new Vector(u, v, 0));
                 }
             }
@@ -371,8 +380,15 @@
 
         protected override void OnDraw(Camera camera)
         {
+            var offsetX = Position.X;
+            var offsetZ = Position.Z;
+            var matrix = ViewPort.GLMatrix4.create();
+            ViewPort.GLMatrix4.identity(matrix);
+            matrix = ViewPort.GLMatrix4.translate(matrix, Position.ToFloatVector());
+            ViewPort.Matrices.ModelView = ViewPort.GLMatrix4.multiply(
+                ViewPort.Matrices.ModelView, matrix, ViewPort.Matrices.ModelView);
+
             camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexPositions);
-            //camera.GL.vertexAttribPointer(ViewPort.Attributes.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
             camera.GL.vertexAttribPointer(TerrainShaderProgram.VertexPosition, 3, camera.GL.FLOAT, false, 0, 0);
 
             camera.GL.bindBuffer(camera.GL.ARRAY_BUFFER, this.Buffers.VertexNormals);
